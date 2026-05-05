@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { JetBrains_Mono, Instrument_Serif } from "next/font/google";
+import { PathBreadcrumb } from "@/components/path-breadcrumb";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  display: "swap",
 });
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -36,13 +36,12 @@ export default function RootLayout({
         "bg-background",
         "antialiased",
         "p-2",
-        geistSans.variable,
-        geistMono.variable,
-        "font-mono",
+        instrumentSerif.variable,
         jetbrainsMono.variable,
       )}
     >
-      <body className="min-h-full bg-background text-foreground flex flex-col p-4 border-2 border-primary rounded-xl">
+      <body className="min-h-full bg-background text-foreground flex flex-col p-4 border-2 border-primary rounded-xl font-mono antialiased">
+        <PathBreadcrumb />
         {children}
       </body>
     </html>

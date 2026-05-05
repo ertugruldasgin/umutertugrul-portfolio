@@ -3,7 +3,7 @@ import path from "node:path";
 
 export default async function AsciiLogo() {
   const art = await fs.readFile(
-    path.join(process.cwd(), "src/assets/ascii-art.txt"),
+    path.join(process.cwd(), "public/assets/ascii-art.txt"),
     "utf-8",
   );
 
