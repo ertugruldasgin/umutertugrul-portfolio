@@ -40,9 +40,9 @@ export default function RootLayout({
         jetbrainsMono.variable,
       )}
     >
-      <body className="min-h-full bg-background text-foreground flex flex-col p-4 border-2 border-primary rounded-xl font-mono antialiased">
+      <body className="min-h-full bg-background text-foreground flex flex-col p-2 md:p-4 md:border border-primary rounded-xl font-mono antialiased">
         <PathBreadcrumb />
-        {children}
+        <div className="pt-10 w-full max-w-3xl ml-auto mr-auto">{children}</div>
       </body>
     </html>
   );
