@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
   title: "Projects — Umut Ertugrul",
@@ -6,6 +6,11 @@ export const metadata = {
 
 export default function ProjectsPage() {
   return (
-    <PagePlaceholder title="projects" note="a selection of my recent work" />
+    <div className="flex flex-col gap-12 flex-1 w-full">
+      <PageHeader
+        title="projects"
+        description="a selection of my work, experiments, and collaborations"
+      />
+    </div>
   );
 }

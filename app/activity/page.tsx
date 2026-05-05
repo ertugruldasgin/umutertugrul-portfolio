@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
   title: "Activity — Umut Ertugrul",
@@ -6,9 +6,11 @@ export const metadata = {
 
 export default function ActivityPage() {
   return (
-    <PagePlaceholder
-      title="Activity"
-      note="a list of my recent activities and updates"
-    />
+    <div className="flex flex-col gap-12 flex-1 w-full">
+      <PageHeader
+        title="activity"
+        description="a trail of things i've touched recently"
+      />
+    </div>
   );
 }

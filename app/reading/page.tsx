@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
   title: "Reading — Umut Ertugrul",
@@ -6,9 +6,11 @@ export const metadata = {
 
 export default function ReadingPage() {
   return (
-    <PagePlaceholder
-      title="Reading"
-      note="a list of books I'm currently reading"
-    />
+    <div className="flex flex-col gap-12 flex-1 w-full">
+      <PageHeader
+        title="reading"
+        description="a list of books I'm currently reading or have finished"
+      />
+    </div>
   );
 }

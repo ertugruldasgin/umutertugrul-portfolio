@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
   title: "Rehberiniz — Umut Ertugrul",
@@ -6,6 +6,11 @@ export const metadata = {
 
 export default function RehberinizPage() {
   return (
-    <PagePlaceholder title="Rehberiniz" note="a multitenant course platform" />
+    <div className="flex flex-col gap-12 flex-1 w-full">
+      <PageHeader
+        title="rehberiniz"
+        description="a multitenant course platform"
+      />
+    </div>
   );
 }

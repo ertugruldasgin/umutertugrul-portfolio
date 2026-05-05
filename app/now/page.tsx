@@ -1,4 +1,4 @@
-import { PagePlaceholder } from "@/components/page-placeholder";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
   title: "Now — Umut Ertugrul",
@@ -6,9 +6,11 @@ export const metadata = {
 
 export default function NowPage() {
   return (
-    <PagePlaceholder
-      title="now"
-      note="what I'm doing at the moment — inspired by nownownow.com"
-    />
+    <div className="flex flex-col gap-12 flex-1 w-full">
+      <PageHeader
+        title="now"
+        description="what I'm doing at the moment — inspired by nownownow.com"
+      />
+    </div>
   );
 }
