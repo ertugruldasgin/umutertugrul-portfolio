@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { JetBrains_Mono, Instrument_Serif } from "next/font/google";
+import { JetBrains_Mono, Instrument_Serif, Geist } from "next/font/google";
 import { PathBreadcrumb } from "@/components/path-breadcrumb";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -15,6 +15,12 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   style: ["normal", "italic"],
   variable: "--font-serif",
+  display: "swap",
+});
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -38,6 +44,7 @@ export default function RootLayout({
         "p-2",
         instrumentSerif.variable,
         jetbrainsMono.variable,
+        geist.variable,
       )}
     >
       <body className="min-h-full bg-background text-foreground flex flex-col p-2 md:p-4 md:border border-primary rounded-xl font-mono antialiased">
