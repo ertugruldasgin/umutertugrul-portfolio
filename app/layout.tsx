@@ -49,7 +49,9 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground flex flex-col p-2 md:p-4 md:border border-primary rounded-xl font-mono antialiased">
         <PathBreadcrumb />
-        <div className="pt-10 w-full max-w-3xl ml-auto mr-auto">{children}</div>
+        <div className="pt-10 w-full max-w-3xl ml-auto mr-auto pb-8">
+          {children}
+        </div>
       </body>
     </html>
   );

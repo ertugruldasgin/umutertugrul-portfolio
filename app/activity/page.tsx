@@ -1,4 +1,5 @@
 import { ContributionGraph } from "@/components/contribution-graph";
+import { HuggingFaceStats } from "@/components/huggingface-stats";
 import { PageHeader } from "@/components/page-header";
 import { RecentCommits } from "@/components/recent-commits";
 import { SubHeader } from "@/components/sub-header";
@@ -8,15 +9,18 @@ import {
   fetchRecentCommits,
   RecentCommit,
 } from "@/lib/github";
+import { HFStats, fetchHFDatasets } from "@/lib/huggingface";
 
 export default async function ActivityPage() {
   let contributions = null;
   let commits: RecentCommit[] = [];
+  let hfStats: HFStats | null = null;
 
   try {
-    [contributions, commits] = await Promise.all([
+    [contributions, commits, hfStats] = await Promise.all([
       fetchContributions(),
       fetchRecentCommits(15),
+      fetchHFDatasets(),
     ]);
   } catch (error) {
     console.error("GitHub fetch failed:", error);
@@ -38,7 +42,7 @@ export default async function ActivityPage() {
       )}
 
       <div className="block md:hidden">
-        <SubHeader title="Recent Commits" />
+        <SubHeader title="recent commits" />
         <RecentCommits commits={commits} />
       </div>
 
@@ -48,6 +52,21 @@ export default async function ActivityPage() {
       >
         <RecentCommits commits={commits} />
       </TerminalCard>
+
+      {hfStats && hfStats.datasets.length > 0 && (
+        <div>
+          <div className="block md:hidden">
+            <SubHeader title="datasets" />
+            <HuggingFaceStats stats={hfStats} />
+          </div>
+          <TerminalCard
+            title="datasets"
+            className="border-warning text-warning hidden md:block"
+          >
+            <HuggingFaceStats stats={hfStats} />
+          </TerminalCard>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Octokit } from "octokit";
 
 const TOKEN = process.env.GITHUB_TOKEN;

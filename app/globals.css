@@ -4,24 +4,6 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --color-ansi-black: #0d1117;
-  --color-ansi-red: #c32424;
-  --color-ansi-green: #24c391;
-  --color-ansi-yellow: #c3a924;
-  --color-ansi-blue: #2455c3;
-  --color-ansi-magenta: #c224c3;
-  --color-ansi-cyan: #24bac3;
-  --color-ansi-white: #e8ecf2;
-
-  --color-ansi-bright-black: #3b4d68;
-  --color-ansi-bright-red: #d93030;
-  --color-ansi-bright-green: #30d9a4;
-  --color-ansi-bright-yellow: #d9bd30;
-  --color-ansi-bright-blue: #3063d9;
-  --color-ansi-bright-magenta: #d930d9;
-  --color-ansi-bright-cyan: #30d1d9;
-  --color-ansi-bright-white: #ffffff;
-
   --background: #0d1117;
   --foreground: #e8ecf2;
 
