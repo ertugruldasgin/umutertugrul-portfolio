@@ -1,11 +1,34 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+
+const POINTER_QUERY = "(hover: hover) and (pointer: fine)";
+
+function subscribe(callback: () => void) {
+  const mql = window.matchMedia(POINTER_QUERY);
+  mql.addEventListener("change", callback);
+  return () => mql.removeEventListener("change", callback);
+}
+
+function getSnapshot() {
+  return window.matchMedia(POINTER_QUERY).matches;
+}
+
+function getServerSnapshot() {
+  return false;
+}
 
 export function CursorAura() {
   const ref = useRef<HTMLDivElement>(null);
+  const isPointerDevice = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   useEffect(() => {
+    if (!isPointerDevice) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!ref.current) return;
       ref.current.style.transform = `translate3d(${e.clientX - 64}px, ${e.clientY - 64}px, 0)`;
@@ -22,7 +45,9 @@ export function CursorAura() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
+  }, [isPointerDevice]);
+
+  if (!isPointerDevice) return null;
 
   return (
     <div
