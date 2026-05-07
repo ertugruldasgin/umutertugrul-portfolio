@@ -11,6 +11,10 @@ import {
 } from "@/lib/github";
 import { HFStats, fetchHFDatasets } from "@/lib/huggingface";
 
+export const metadata = {
+  title: "activity",
+};
+
 export default async function ActivityPage() {
   let contributions = null;
   let commits: RecentCommit[] = [];

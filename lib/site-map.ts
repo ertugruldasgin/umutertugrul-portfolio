@@ -1,10 +1,11 @@
 export const siteMap: Record<string, string[]> = {
-  "/": ["projects", "now", "uses", "reading", "activity"],
+  "/": ["projects", "now", "uses", "reading", "activity", "whoami"],
   "/projects": ["rehberiniz"],
   "/now": [],
   "/uses": [],
   "/reading": [],
   "/activity": [],
+  "/whoami": [],
 };
 
 export function getChildren(currentPath: string): string[] {

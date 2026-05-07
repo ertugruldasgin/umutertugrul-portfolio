@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/page-header";
 import { TerminalCard } from "@/components/terminal-card";
 
 export const metadata = {
-  title: "Uses — Umut Ertugrul",
+  title: "uses",
 };
 
 export default function UsesPage() {

@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
-  title: "Reading — Umut Ertugrul",
+  title: "reading",
 };
 
 export default function ReadingPage() {
