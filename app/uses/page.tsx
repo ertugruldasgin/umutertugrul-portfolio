@@ -10,7 +10,7 @@ export default function UsesPage() {
     <div className="flex flex-col gap-12 flex-1 w-full">
       <PageHeader
         title="uses"
-        description="a list of hardware, software, tools I use daily"
+        description="what i reach for, when i sit down"
       />
 
       <div className="flex flex-col gap-8">
@@ -43,6 +43,50 @@ export default function UsesPage() {
           </ul>
         </TerminalCard>
 
+        <TerminalCard
+          title="peripherals"
+          className="border-warning text-warning"
+        >
+          <ul className="flex flex-col gap-2">
+            <li>
+              <p>Samsung ViewFinity S6</p>
+              <p className="text-xs font-bold text-subtle">24{'"'} 2K 100Hz</p>
+            </li>
+            <li>
+              <p>Edifier MR4</p>
+              <p className="text-xs font-bold text-subtle">
+                studio monitor speaker (white)
+              </p>
+            </li>
+            <li>
+              <p>Logitech MX Keys Mini for Mac</p>
+              <p className="text-xs font-bold text-subtle">
+                primary keyboard (pale gray)
+              </p>
+            </li>
+            <li>
+              <p>Epomaker SK64S</p>
+              <p className="text-xs font-bold text-subtle">
+                hot swappable mechanical (white)
+              </p>
+            </li>
+            <li>
+              <p>Logitech MX Anywhere 3</p>
+              <p className="text-xs font-bold text-subtle">
+                primary mouse (white)
+              </p>
+            </li>
+            <li>
+              <p>Xiaomi Mi Light Bar</p>
+              <p className="text-xs font-bold text-subtle">monitor light bar</p>
+            </li>
+            <li>
+              <p>Casio CDP-S110BK</p>
+              <p className="text-xs font-bold text-subtle">digital piano</p>
+            </li>
+          </ul>
+        </TerminalCard>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <TerminalCard
             title="editor"
@@ -70,7 +114,10 @@ export default function UsesPage() {
               </li>
             </ul>
           </TerminalCard>
-          <TerminalCard title="tools" className="border-warning text-warning">
+          <TerminalCard
+            title="tools"
+            className="border-syntax-keyword text-syntax-keyword"
+          >
             <ul className="flex flex-col gap-2">
               <li>Tailscale</li>
               <li>Coolify</li>
@@ -82,12 +129,12 @@ export default function UsesPage() {
             <ul className="flex flex-col gap-2">
               <li>LibreOffice</li>
               <li>Brave</li>
-              <li>Exalidraw</li>
+              <li>Excalidraw</li>
               <li>Mattermost</li>
             </ul>
           </TerminalCard>
           <TerminalCard
-            title="favorites"
+            title="everyone should try"
             className="border-destructive text-destructive"
           >
             <ul className="flex flex-col gap-2">

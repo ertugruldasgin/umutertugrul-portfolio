@@ -50,14 +50,14 @@ export function ContributionGraph({ data }: ContributionGraphProps) {
                       width={CELL_SIZE}
                       height={CELL_SIZE}
                       rx={2}
-                      className={`${cellFillClass(day.level)} cursor-pointer`}
+                      className={`${cellFillClass(day.level)}`}
                       aria-label={`${day.count} contributions on ${day.date}`}
                     />
                   </TooltipTrigger>
                   <TooltipContent
                     side="top"
-                    sideOffset={6}
-                    className="rounded-lg border border-border/70 bg-surface/20 backdrop-blur-sm text-xs text-foreground whitespace-nowrap font-mono px-2  py-1 [&>span]:hidden"
+                    sideOffset={8}
+                    className="rounded-lg border border-border/70 bg-surface/20 backdrop-blur-sm text-xs text-foreground whitespace-nowrap font-mono px-2  py-1 [&>span]:hidden select-none"
                   >
                     <p className="text-primary">{day.count}</p>{" "}
                     {day.count === 1 ? "contribution" : "contributions"}{" "}

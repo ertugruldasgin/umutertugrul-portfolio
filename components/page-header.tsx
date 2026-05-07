@@ -5,10 +5,10 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description }: PageHeaderProps) {
   return (
-    <header className="flex flex-col gap-1 w-full">
+    <header className="flex flex-col gap-2 w-full">
       <h1 className="text-6xl font-serif text-primary select-none">{title}</h1>
       {description && (
-        <p className="text-xs md:text-sm text-subtle flex gap-2 items-center tracking-wide">
+        <p className="text-xs md:text-sm text-subtle flex gap-2 tracking-wide">
           <span className="text-primary/60 font-mono">#</span>
           {description}
         </p>

@@ -3,6 +3,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { JetBrains_Mono, Instrument_Serif, Geist } from "next/font/google";
 import { PathBreadcrumb } from "@/components/path-breadcrumb";
+import { CursorAura } from "@/components/cursor-aura";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full bg-background text-foreground flex flex-col p-2 md:p-4 md:border border-primary rounded-xl font-mono antialiased">
+        <CursorAura />
         <PathBreadcrumb />
         <div className="pt-10 w-full max-w-3xl ml-auto mr-auto pb-8">
           {children}
