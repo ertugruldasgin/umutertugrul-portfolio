@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
-  title: "Rehberiniz — Umut Ertugrul",
+  title: "rehberiniz",
 };
 
 export default function RehberinizPage() {

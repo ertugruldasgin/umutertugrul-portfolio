@@ -3,8 +3,6 @@ import { SectionDivider } from "@/components/section-divider";
 import { WhoAmIEducation } from "@/components/whoami-education";
 import { WhoAmIHeader } from "@/components/whoami-header";
 import { WhoAmIItem } from "@/components/whoami-item";
-import { link } from "fs";
-import { title } from "process";
 
 export const metadata = {
   title: "whoami",

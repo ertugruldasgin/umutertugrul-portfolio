@@ -1,6 +1,5 @@
 import { AgeCounter } from "@/components/age-counter";
 import AsciiLogo from "@/components/ascii-logo";
-import { PageHeader } from "@/components/page-header";
 import { TerminalCard } from "@/components/terminal-card";
 
 const birthDate = new Date("2004-11-11T00:00:00");

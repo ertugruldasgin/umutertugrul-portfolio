@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
-  title: "Projects — Umut Ertugrul",
+  title: "projects",
 };
 
 export default function ProjectsPage() {

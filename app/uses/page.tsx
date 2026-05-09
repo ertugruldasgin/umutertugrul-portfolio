@@ -139,6 +139,7 @@ export default function UsesPage() {
           >
             <ul className="flex flex-col gap-2">
               <li>tmux</li>
+              <li>LocalSend</li>
               <li>Self Hosted Supabase</li>
             </ul>
           </TerminalCard>

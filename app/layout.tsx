@@ -26,10 +26,26 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Umut Ertugrul",
-  description: "Portfolio of Umut Ertugrul",
+  title: {
+    default: "Umut Ertugrul",
+    template: "Umut's %s",
+  },
+  description: "computer engineering sophomore, builder, homelab tinkerer.",
+  metadataBase: new URL("https://umutertugrul.com"),
+  openGraph: {
+    title: "Umut Ertugrul",
+    description: "computer engineering sophomore, builder, homelab tinkerer.",
+    url: "https://umutertugrul.com",
+    siteName: "Umut Ertugrul",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Umut Ertugrul",
+    description: "computer engineering sophomore, builder, homelab tinkerer.",
+  },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{

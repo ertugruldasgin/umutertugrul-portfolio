@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
-  title: "Now — Umut Ertugrul",
+  title: "now",
 };
 
 export default function NowPage() {
@@ -9,7 +9,7 @@ export default function NowPage() {
     <div className="flex flex-col gap-12 flex-1 w-full">
       <PageHeader
         title="now"
-        description="what I'm doing at the moment — inspired by nownownow.com"
+        description="what I'm doing at the moment - inspired by nownownow.com"
       />
     </div>
   );
