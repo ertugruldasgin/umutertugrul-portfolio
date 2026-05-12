@@ -31,7 +31,7 @@ export default async function ActivityPage() {
   }
 
   return (
-    <div className="flex flex-col gap-12 flex-1 w-full">
+    <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
       <PageHeader
         title="activity"
         description="a trail of things i've touched recently"

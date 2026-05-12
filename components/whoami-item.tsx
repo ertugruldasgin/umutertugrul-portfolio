@@ -42,7 +42,9 @@ export function WhoAmIItem({
 
         <div className="flex flex-col items-start md:items-end gap-1 text-sm">
           {location && (
-            <p className="text-lg leading-none text-foreground">{location}</p>
+            <p className="md:text-lg leading-none text-subtle md:text-foreground">
+              {location}
+            </p>
           )}
           {period && <p className="text-subtle font-mono">{period}</p>}
         </div>

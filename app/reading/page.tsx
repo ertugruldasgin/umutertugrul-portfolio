@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function ReadingPage() {
   return (
-    <div className="flex flex-col gap-12 flex-1 w-full">
+    <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
       <PageHeader
         title="reading"
         description="a list of books I'm currently reading or have finished"

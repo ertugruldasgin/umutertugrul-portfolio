@@ -20,11 +20,14 @@ export function PathBreadcrumb() {
       aria-label="Breadcrumb"
       className="absolute text-sm sm:text-base select-none"
     >
-      <span className="text-subtle">
+      <span className="text-base md:text-lg text-subtle">
         {segments.length === 0 ? (
           <ActiveSegment label="~" currentPath={pathname} />
         ) : (
-          <Link href="/" className="hover:text-primary transition-colors">
+          <Link
+            href="/"
+            className="hover:text-primary transition-colors inline-block px-3 py-2 -mx-3 -my-2"
+          >
             ~
           </Link>
         )}
@@ -74,7 +77,7 @@ function ActiveSegment({ label, currentPath }: ActiveSegmentProps) {
     <Popover>
       <PopoverTrigger asChild>
         <button
-          className="text-foreground hover:text-primary transition-colors cursor-pointer"
+          className="text-foreground hover:text-primary transition-colors cursor-pointer px-3 py-2 -mx-3 -my-2"
           aria-current="page"
         >
           {label}

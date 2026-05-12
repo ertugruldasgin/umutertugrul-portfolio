@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/page-header";
 import { createClient } from "@/lib/supabase/server";
-import ReactMarkdown from "react-markdown";
 
 export const revalidate = 3600;
 
@@ -19,17 +18,16 @@ export default async function NowPage() {
     .single();
 
   return (
-    <div className="flex flex-col gap-12 flex-1 w-full">
+    <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
       <div className="flex flex-col gap-6">
         <PageHeader title="now" description="what i'm doing at the moment." />
+
         {error || !latestUpdate ? (
           <div>
             <p>No updates yet.</p>
           </div>
         ) : (
-          <div>
-            <ReactMarkdown>{latestUpdate.content}</ReactMarkdown>
-          </div>
+          latestUpdate.content
         )}
       </div>
     </div>

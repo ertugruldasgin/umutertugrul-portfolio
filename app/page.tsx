@@ -6,7 +6,7 @@ const birthDate = new Date("2004-11-11T00:00:00");
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 w-full gap-12">
+    <div className="flex flex-col flex-1 w-full max-w-3xl ml-auto mr-auto gap-12">
       <div className="flex flex-col gap-1">
         <pre className="hidden md:block">
           <AsciiLogo />
@@ -20,7 +20,7 @@ export default function Home() {
       </div>
 
       <TerminalCard title="whoami" className="border-primary text-primary">
-        <p className="text-base text-foreground">
+        <p className="text-foreground">
           <AgeCounter birthDate={birthDate} /> years old. Homelab tinkerer. I
           build things I wish existed, usually the ones that fit how I live.
         </p>
