@@ -54,11 +54,7 @@ export function ContributionGraph({ data }: ContributionGraphProps) {
                       aria-label={`${day.count} contributions on ${day.date}`}
                     />
                   </TooltipTrigger>
-                  <TooltipContent
-                    side="top"
-                    sideOffset={8}
-                    className="rounded-lg border border-border/70 bg-surface/20 backdrop-blur-sm text-xs text-foreground whitespace-nowrap font-mono px-2  py-1 [&>span]:hidden select-none"
-                  >
+                  <TooltipContent side="top" sideOffset={8}>
                     <p className="text-primary">{day.count}</p>{" "}
                     {day.count === 1 ? "contribution" : "contributions"}{" "}
                     <p className="text-subtle">{formatDate(day.date)}</p>

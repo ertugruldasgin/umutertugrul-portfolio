@@ -100,7 +100,7 @@ export default function WhoAmIPage() {
   return (
     <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
       <div className="flex flex-col gap-6">
-        <PageHeader title="whoami" description="the long answer" />
+        <PageHeader title="whoami" description={<p>the long answer</p>} />
 
         <WhoAmIHeader
           name="Umut Ertugrul Dasgin"

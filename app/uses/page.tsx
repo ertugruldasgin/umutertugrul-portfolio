@@ -10,7 +10,7 @@ export default function UsesPage() {
     <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
       <PageHeader
         title="uses"
-        description="what i reach for, when i sit down"
+        description={<p>what i reach for, when i sit down</p>}
       />
 
       <div className="flex flex-col gap-8">

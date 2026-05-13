@@ -34,7 +34,7 @@ export default async function ActivityPage() {
     <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
       <PageHeader
         title="activity"
-        description="a trail of things i've touched recently"
+        description={<p>a trail of things i&apos;ve touched recently</p>}
       />
 
       {contributions ? (

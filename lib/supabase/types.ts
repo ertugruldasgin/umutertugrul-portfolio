@@ -16,13 +16,15 @@ export type Database = {
           location: string | null;
           published_at: string;
           created_at: string;
+          user_id: string | null;
         };
         Insert: {
           id?: string;
-          content: string;
+          content: Json;
           location?: string | null;
           published_at?: string;
           created_at?: string;
+          user_id?: string;
         };
         Update: {
           id?: string;
@@ -30,6 +32,7 @@ export type Database = {
           location?: string | null;
           published_at?: string;
           created_at?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
