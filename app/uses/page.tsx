@@ -144,6 +144,29 @@ export default function UsesPage() {
             </ul>
           </TerminalCard>
         </div>
+        <TerminalCard title="color scheme" className="border-white text-white">
+          <div className="flex flex-col flex-1 gap-2">
+            <p>{'"arc dark"'}</p>
+            <div className="w-full md:w-128 h-12 grid grid-cols-8 grid-rows-2">
+              <span className="w-full h-full bg-background"></span>
+              <span className="w-full h-full bg-destructive"></span>
+              <span className="w-full h-full bg-accent-foreground"></span>
+              <span className="w-full h-full bg-warning"></span>
+              <span className="w-full h-full bg-info"></span>
+              <span className="w-full h-full bg-syntax-keyword"></span>
+              <span className="w-full h-full bg-secondary"></span>
+              <span className="w-full h-full bg-syntax-variable"></span>
+              <span className="w-full h-full bg-syntax-comment"></span>
+              <span className="w-full h-full bg-danger-hover"></span>
+              <span className="w-full h-full bg-syntax-string"></span>
+              <span className="w-full h-full bg-syntax-number"></span>
+              <span className="w-full h-full bg-syntax-function"></span>
+              <span className="w-full h-full bg-purple"></span>
+              <span className="w-full h-full bg-secondary-hover"></span>
+              <span className="w-full h-full bg-white"></span>
+            </div>
+          </div>
+        </TerminalCard>
       </div>
     </div>
   );

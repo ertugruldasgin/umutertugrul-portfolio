@@ -11,7 +11,7 @@ import { SubHeader } from "@/components/sub-header";
 import { SectionDivider } from "@/components/section-divider";
 import type { User } from "@supabase/supabase-js";
 
-const OWNER_EMAIL = "senin-github-emailin@gmail.com"; // GitHub email'ini yaz
+const OWNER_EMAIL = "ertugruldasgin@hotmail.com";
 
 export default function NowPage() {
   const [value, setValue] = useState<Content>("");

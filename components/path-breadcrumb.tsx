@@ -90,7 +90,7 @@ function ActiveSegment({ label, currentPath }: ActiveSegmentProps) {
         <div className="px-3 py-2 text-xs text-subtle border-b border-border">
           {parentDisplay(currentPath, type)}
         </div>
-        <ScrollArea className="max-h-64">
+        <ScrollArea className="max-h-min">
           <ul className="p-1">
             {items.map((item) => {
               const href = buildNavHref(currentPath, item, type);

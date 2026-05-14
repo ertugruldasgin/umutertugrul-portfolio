@@ -2,7 +2,7 @@ import { ContributionGraph } from "@/components/contribution-graph";
 import { HuggingFaceStats } from "@/components/huggingface-stats";
 import { PageHeader } from "@/components/page-header";
 import { RecentCommits } from "@/components/recent-commits";
-import { SubHeader } from "@/components/sub-header";
+import { SectionDivider } from "@/components/section-divider";
 import { TerminalCard } from "@/components/terminal-card";
 import {
   fetchContributions,
@@ -46,7 +46,7 @@ export default async function ActivityPage() {
       )}
 
       <div className="block md:hidden">
-        <SubHeader title="recent commits" />
+        <SectionDivider title="recent commits" />
         <RecentCommits commits={commits} />
       </div>
 
@@ -60,7 +60,11 @@ export default async function ActivityPage() {
       {hfStats && hfStats.datasets.length > 0 && (
         <div>
           <div className="block md:hidden">
-            <SubHeader title="datasets" />
+            <SectionDivider
+              title="datasets"
+              titleClassName="text-warning"
+              lineClassName="bg-warning"
+            />
             <HuggingFaceStats stats={hfStats} />
           </div>
           <TerminalCard

@@ -64,6 +64,9 @@
   --sidebar-border: #3b4d68;
   --sidebar-ring: #24c391;
 
+  --white: #ffffff;
+  --purple: #d930d9;
+
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
@@ -122,6 +125,9 @@
   --color-syntax-comment: var(--syntax-comment);
   --color-syntax-function: var(--syntax-function);
   --color-syntax-variable: var(--syntax-variable);
+
+  --color-white: var(--white);
+  --color-purple: var(--purple);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
