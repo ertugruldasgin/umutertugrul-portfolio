@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -10,10 +10,19 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getNavOptions, buildNavHref } from "@/lib/site-map";
+import { createClient } from "@/lib/supabase/client";
 
 export function PathBreadcrumb() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsAdmin(!!user);
+    });
+  }, []);
 
   return (
     <nav
@@ -22,7 +31,7 @@ export function PathBreadcrumb() {
     >
       <span className="text-base md:text-lg text-subtle">
         {segments.length === 0 ? (
-          <ActiveSegment label="~" currentPath={pathname} />
+          <ActiveSegment label="~" currentPath={pathname} isAdmin={isAdmin} />
         ) : (
           <Link
             href="/"
@@ -40,7 +49,11 @@ export function PathBreadcrumb() {
             <Fragment key={href}>
               <span aria-hidden="true">/</span>
               {isLast ? (
-                <ActiveSegment label={segment} currentPath={pathname} />
+                <ActiveSegment
+                  label={segment}
+                  currentPath={pathname}
+                  isAdmin={isAdmin}
+                />
               ) : (
                 <Link
                   href={href}
@@ -60,10 +73,11 @@ export function PathBreadcrumb() {
 interface ActiveSegmentProps {
   label: string;
   currentPath: string;
+  isAdmin: boolean;
 }
 
-function ActiveSegment({ label, currentPath }: ActiveSegmentProps) {
-  const { type, items } = getNavOptions(currentPath);
+function ActiveSegment({ label, currentPath, isAdmin }: ActiveSegmentProps) {
+  const { type, items } = getNavOptions(currentPath, isAdmin);
 
   if (items.length === 0) {
     return (
@@ -138,7 +152,6 @@ function isCurrentItem(
   type: "children" | "siblings",
 ): boolean {
   if (type === "children") return false;
-
   const segments = currentPath.split("/").filter(Boolean);
   if (segments.length === 0) return false;
   return segments[segments.length - 1] === item;
