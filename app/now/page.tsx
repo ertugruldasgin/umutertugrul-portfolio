@@ -18,6 +18,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface NowUpdate {
   id: string;
@@ -108,7 +109,19 @@ export default function NowPage() {
         <PageHeader
           title="now"
           description={
-            "where my focus is right now.\nthis site is inspired by Derek Sivers' /now project."
+            <div>
+              <p>where my focus is right now.</p>
+              <p>
+                this site is inspires by Derek Sivers&apos;{" "}
+                <Link
+                  href={"https://nownownow.com/about"}
+                  className="text-secondary hover:text-secondary-hover"
+                >
+                  /now
+                </Link>{" "}
+                project.
+              </p>
+            </div>
           }
         />
         {isOwner && !isEditing && (
@@ -157,7 +170,7 @@ export default function NowPage() {
                     <Button
                       variant="outline"
                       className={cn(
-                        "w-[200px] justify-start text-left font-mono text-sm rounded-md text-primary hover:text-primary-hover hover:cursor-pointer",
+                        "w-[212px] h-8 justify-start text-left font-mono text-sm rounded-md text-primary hover:text-primary-hover hover:cursor-pointer",
                         !draftDate && "text-subtle/50",
                       )}
                     >
@@ -167,7 +180,10 @@ export default function NowPage() {
                         : "pick a date"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-auto p-0 rounded-lg"
+                    align="start"
+                  >
                     <Calendar
                       mode="single"
                       selected={draftDate ? new Date(draftDate) : undefined}
@@ -190,7 +206,7 @@ export default function NowPage() {
                   value={draftLocation}
                   onChange={(e) => setDraftLocation(e.target.value)}
                   placeholder="istanbul, turkey"
-                  className="h-full bg-transparent border border-border rounded-md px-2 py-1 text-sm font-mono text-primary placeholder:text-subtle/50"
+                  className="w-[212px] h-8 bg-transparent border border-border rounded-md px-2 py-1 text-sm font-mono text-primary placeholder:text-subtle/50"
                 />
               </label>
             </div>
@@ -209,7 +225,7 @@ export default function NowPage() {
         ) : update ? (
           <div>
             <SubHeader
-              className="text-primary font-mono text-base font-medium lowercase"
+              className="text-secondary font-mono text-base font-medium lowercase"
               title={`last ping: ${formatDate(update.published_at)}${
                 update.location ? ` - ${update.location}` : ""
               }`}

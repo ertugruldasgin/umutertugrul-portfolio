@@ -5,6 +5,7 @@ import { JetBrains_Mono, Instrument_Serif, Geist } from "next/font/google";
 import { PathBreadcrumb } from "@/components/path-breadcrumb";
 import { CursorAura } from "@/components/cursor-aura";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Footer } from "@/components/footer";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -47,6 +48,12 @@ export const metadata: Metadata = {
     description: "computer engineering sophomore, builder, homelab tinkerer.",
   },
 };
+
+const github = "https://github.com/ertugruldasgin";
+const huggingface = "https://huggingface.co/umutertugrul";
+const linkedin = "https://www.linkedin.com/in/umutertugruldasgin/";
+const email = "ertugruldasgin@gmail.com";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -71,6 +78,12 @@ export default function RootLayout({
           <CursorAura />
           <PathBreadcrumb />
           <div className="pt-10 w-full pb-8">{children}</div>
+          <Footer
+            github={github}
+            huggingface={huggingface}
+            linkedin={linkedin}
+            email={email}
+          />
         </TooltipProvider>
       </body>
     </html>
