@@ -46,12 +46,13 @@ export function getSiblings(currentPath: string): string[] {
   const segments = currentPath.split("/").filter(Boolean);
   if (segments.length === 0) return siteMap["/"]?.children ?? [];
   const parentPath = "/" + segments.slice(0, -1).join("/");
-  return siteMap[parentPath]?.children ?? [];
+  const siblings = siteMap[parentPath]?.children ?? [];
+  return ["..", ...siblings];
 }
 
 export function filterByRole(items: string[], isAdmin: boolean): string[] {
   if (isAdmin) return items;
-  return items.filter((item) => !ADMIN_ROUTES.has(item));
+  return items.filter((item) => item === ".." || !ADMIN_ROUTES.has(item));
 }
 
 export function getNavOptions(
@@ -63,7 +64,8 @@ export function getNavOptions(
 } {
   const children = getChildren(currentPath);
   if (children.length > 0) {
-    return { type: "children", items: filterByRole(children, isAdmin) };
+    const withParent = currentPath === "/" ? children : ["..", ...children];
+    return { type: "children", items: filterByRole(withParent, isAdmin) };
   }
   return {
     type: "siblings",
@@ -76,6 +78,12 @@ export function buildNavHref(
   item: string,
   type: "children" | "siblings",
 ): string {
+  if (item === "..") {
+    const segments = currentPath.split("/").filter(Boolean);
+    if (segments.length <= 1) return "/";
+    return "/" + segments.slice(0, -1).join("/");
+  }
+
   if (type === "children") {
     return currentPath === "/" ? `/${item}` : `${currentPath}/${item}`;
   }
