@@ -51,7 +51,6 @@ export const metadata: Metadata = {
 
 const github = "https://github.com/ertugruldasgin";
 const huggingface = "https://huggingface.co/umutertugrul";
-const linkedin = "https://www.linkedin.com/in/umutertugruldasgin/";
 const email = "ertugruldasgin@gmail.com";
 
 export default function RootLayout({
@@ -78,12 +77,7 @@ export default function RootLayout({
           <CursorAura />
           <PathBreadcrumb />
           <div className="pt-10 w-full pb-8">{children}</div>
-          <Footer
-            github={github}
-            huggingface={huggingface}
-            linkedin={linkedin}
-            email={email}
-          />
+          <Footer github={github} huggingface={huggingface} email={email} />
         </TooltipProvider>
       </body>
     </html>
