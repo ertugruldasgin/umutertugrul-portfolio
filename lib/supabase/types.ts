@@ -14,7 +14,6 @@ export type Database = {
           id: string;
           content: string;
           location: string | null;
-          published_at: string;
           created_at: string;
           user_id: string | null;
         };
@@ -22,7 +21,6 @@ export type Database = {
           id?: string;
           content: Json;
           location?: string | null;
-          published_at?: string;
           created_at?: string;
           user_id?: string;
         };
@@ -30,9 +28,47 @@ export type Database = {
           id?: string;
           content?: string;
           location?: string | null;
-          published_at?: string;
           created_at?: string;
           user_id?: string;
+        };
+        Relationships: [];
+      };
+      diagrams: {
+        Row: {
+          id: string;
+          title: string;
+          elements: Json;
+          app_state: Json | null;
+          files: Json | null;
+          user_id: string | null;
+          created_at: string;
+          updated_at: string;
+          parent_id: string | null;
+          is_folder: boolean;
+        };
+        Insert: {
+          id?: string;
+          title?: string;
+          elements?: Json;
+          app_state?: Json | null;
+          files?: Json | null;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+          parent_id?: string | null;
+          is_folder?: boolean;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          elements?: Json;
+          app_state?: Json | null;
+          files?: Json | null;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+          parent_id?: string | null;
+          is_folder?: boolean;
         };
         Relationships: [];
       };

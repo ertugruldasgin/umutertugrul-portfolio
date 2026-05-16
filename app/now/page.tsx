@@ -9,29 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Pencil1Icon, CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { SubHeader } from "@/components/sub-header";
 import { SectionDivider } from "@/components/section-divider";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 interface NowUpdate {
   id: string;
   content: string;
   location: string | null;
-  published_at: string;
+  created_at: string;
   user_id: string | null;
 }
 
 export default function NowPage() {
   const [update, setUpdate] = useState<NowUpdate | null>(null);
   const [draft, setDraft] = useState<Content>("");
-  const [draftDate, setDraftDate] = useState("");
   const [draftLocation, setDraftLocation] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -44,7 +34,7 @@ export default function NowPage() {
       const { data: latest } = await supabase
         .from("now_updates")
         .select("*")
-        .order("published_at", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(1)
         .single();
 
@@ -53,7 +43,7 @@ export default function NowPage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user && latest && user.id === latest.user_id) {
+      if (user && (!latest || user.id === latest.user_id)) {
         setIsOwner(true);
       }
     };
@@ -62,10 +52,8 @@ export default function NowPage() {
   }, []);
 
   const handleEdit = () => {
-    if (!update) return;
-    setDraft(update.content);
-    setDraftDate(update.published_at.split("T")[0]);
-    setDraftLocation(update.location ?? "");
+    setDraft(update?.content ?? "");
+    setDraftLocation(update?.location ?? "");
     setIsEditing(true);
   };
 
@@ -81,16 +69,13 @@ export default function NowPage() {
     } = await supabase.auth.getUser();
     if (!user) return;
 
-    const payload = {
-      content: draft,
-      published_at: new Date(draftDate).toISOString(),
-      location: draftLocation || null,
-      user_id: user.id,
-    };
-
     const { data } = await supabase
       .from("now_updates")
-      .insert(payload)
+      .insert({
+        content: draft,
+        location: draftLocation || null,
+        user_id: user.id,
+      })
       .select()
       .single();
 
@@ -100,7 +85,11 @@ export default function NowPage() {
   };
 
   const formatDate = (iso: string) => {
-    return format(new Date(iso), "dd-MM-yyyy");
+    return new Date(iso).toLocaleDateString("tr-TR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   return (
@@ -109,19 +98,21 @@ export default function NowPage() {
         <PageHeader
           title="now"
           description={
-            <div>
-              <p>where my focus is right now.</p>
-              <p>
-                this site is inspires by Derek Sivers&apos;{" "}
+            <span className="flex flex-col">
+              <span>where my focus is right now.</span>
+              <span>
+                this site is inspired by Derek Sivers&apos;{" "}
                 <Link
-                  href={"https://nownownow.com/about"}
-                  className="text-secondary hover:text-secondary-hover"
+                  href="https://nownownow.com/about"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondary hover:text-secondary-hover transition-colors"
                 >
                   /now
                 </Link>{" "}
                 project.
-              </p>
-            </div>
+              </span>
+            </span>
           }
         />
         {isOwner && !isEditing && (
@@ -131,7 +122,7 @@ export default function NowPage() {
             onClick={handleEdit}
             className="hover:cursor-pointer rounded-lg hover:bg-primary-hover/10"
           >
-            <Pencil1Icon className="mr-2 size-4" />
+            <Pencil1Icon className="mr-1 size-4" />
             Edit
           </Button>
         )}
@@ -143,7 +134,7 @@ export default function NowPage() {
               onClick={handleCancel}
               className="hover:cursor-pointer rounded-lg hover:bg-primary-hover/10"
             >
-              <Cross2Icon className="mr-2 size-4" />
+              <Cross2Icon className="mr-1 size-4" />
               Cancel
             </Button>
             <Button
@@ -152,7 +143,7 @@ export default function NowPage() {
               disabled={saving}
               className="hover:cursor-pointer rounded-lg hover:bg-primary-hover"
             >
-              <CheckIcon className="mr-2 size-4" />
+              <CheckIcon className="mr-1 size-4" />
               {saving ? "Saving..." : "Save"}
             </Button>
           </div>
@@ -163,42 +154,6 @@ export default function NowPage() {
         {isEditing ? (
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-4">
-              <label className="flex flex-col gap-1">
-                <span className="text-xs text-subtle font-mono">date</span>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-[212px] h-8 justify-start text-left font-mono text-sm rounded-md text-primary hover:text-primary-hover hover:cursor-pointer",
-                        !draftDate && "text-subtle/50",
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 size-4" />
-                      {draftDate
-                        ? format(new Date(draftDate), "dd-MM-yyyy")
-                        : "pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto p-0 rounded-lg"
-                    align="start"
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={draftDate ? new Date(draftDate) : undefined}
-                      onSelect={(date) =>
-                        setDraftDate(
-                          date
-                            ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
-                            : "",
-                        )
-                      }
-                      autoFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </label>
               <label className="flex flex-col gap-1">
                 <span className="text-xs text-subtle font-mono">location</span>
                 <input
@@ -226,7 +181,7 @@ export default function NowPage() {
           <div>
             <SubHeader
               className="text-secondary font-mono text-base font-medium lowercase"
-              title={`last ping: ${formatDate(update.published_at)}${
+              title={`last ping: ${formatDate(update.created_at)}${
                 update.location ? ` - ${update.location}` : ""
               }`}
             />
