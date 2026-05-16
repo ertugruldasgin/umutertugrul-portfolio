@@ -47,6 +47,12 @@ export const metadata: Metadata = {
     title: "Umut Ertugrul",
     description: "computer engineering sophomore, builder, homelab tinkerer.",
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "umutertugrul",
+  },
 };
 
 const github = "https://github.com/ertugruldasgin";
