@@ -165,6 +165,7 @@ export default function NowPage() {
               </label>
             </div>
             <MinimalTiptapThree
+              key="now-editor"
               value={draft}
               onChange={setDraft}
               className="w-full min-h-96"

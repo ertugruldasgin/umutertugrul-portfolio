@@ -72,6 +72,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      notes: {
+        Row: {
+          id: string;
+          title: string;
+          content: string;
+          user_id: string | null;
+          created_at: string;
+          updated_at: string;
+          parent_id: string | null;
+          is_folder: boolean;
+        };
+        Insert: {
+          id?: string;
+          title?: string;
+          content?: string;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+          parent_id?: string | null;
+          is_folder?: boolean;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          content?: string;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+          parent_id?: string | null;
+          is_folder?: boolean;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
