@@ -161,3 +161,11 @@
     scrollbar-width: none;
   }
 }
+
+.tiptap a.link {
+  cursor: text;
+}
+
+body.meta-pressed .tiptap a.link {
+  cursor: pointer;
+}

@@ -4,12 +4,13 @@ import { PageHeader } from "@/components/page-header";
 import MinimalTiptapThree from "@/components/ui/minimal-tiptap/components/custom/minimal-tiptap-three";
 import { createClient } from "@/lib/supabase/client";
 import { Content } from "@tiptap/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil1Icon, CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { SectionDivider } from "@/components/section-divider";
 import Link from "next/link";
 import { SuggestItem } from "@/components/suggest-item";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface NowUpdate {
   id: string;
@@ -26,6 +27,9 @@ export default function NowPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [unsavedOpen, setUnsavedOpen] = useState(false);
+  const pendingAction = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -54,14 +58,30 @@ export default function NowPage() {
   const handleEdit = () => {
     setDraft(update?.content ?? "");
     setDraftLocation(update?.location ?? "");
+    setHasChanges(false);
     setIsEditing(true);
   };
 
   const handleCancel = () => {
+    if (hasChanges) {
+      pendingAction.current = () => {
+        setIsEditing(false);
+        setHasChanges(false);
+      };
+      setUnsavedOpen(true);
+      return;
+    }
     setIsEditing(false);
+    setHasChanges(false);
+  };
+
+  const handleDraftChange = (content: Content) => {
+    setDraft(content);
+    setHasChanges(true);
   };
 
   const handleSave = async () => {
+    if (saving || !hasChanges) return;
     setSaving(true);
     const supabase = createClient();
     const {
@@ -81,8 +101,54 @@ export default function NowPage() {
 
     if (data) setUpdate(data);
     setIsEditing(false);
+    setHasChanges(false);
     setSaving(false);
   };
+
+  // ctrl+s save
+  useEffect(() => {
+    if (!isEditing) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  });
+
+  // beforeunload for tab close
+  useEffect(() => {
+    if (!isEditing || !hasChanges) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isEditing, hasChanges]);
+
+  // popstate for browser back
+  useEffect(() => {
+    if (!isEditing || !hasChanges) return;
+
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
+      pendingAction.current = () => {
+        window.history.back();
+      };
+      setUnsavedOpen(true);
+      window.history.pushState(null, "", window.location.href);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [isEditing, hasChanges]);
 
   const formatDate = (iso: string) => {
     return new Date(iso).toLocaleDateString("tr-TR", {
@@ -139,7 +205,7 @@ export default function NowPage() {
             <Button
               size="sm"
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || !hasChanges}
               className="hover:cursor-pointer rounded-lg hover:bg-primary-hover"
             >
               <CheckIcon className="mr-1 size-4" />
@@ -158,7 +224,10 @@ export default function NowPage() {
                 <input
                   type="text"
                   value={draftLocation}
-                  onChange={(e) => setDraftLocation(e.target.value)}
+                  onChange={(e) => {
+                    setDraftLocation(e.target.value);
+                    setHasChanges(true);
+                  }}
                   placeholder="istanbul, turkey"
                   className="w-[212px] h-8 bg-transparent border border-border rounded-md px-2 py-1 text-sm font-mono text-primary placeholder:text-subtle/50"
                 />
@@ -167,7 +236,7 @@ export default function NowPage() {
             <MinimalTiptapThree
               key="now-editor"
               value={draft}
-              onChange={setDraft}
+              onChange={handleDraftChange}
               className="w-full min-h-96"
               editorContentClassName=""
               output="html"
@@ -217,6 +286,21 @@ export default function NowPage() {
           />
         </div>
       </div>
+
+      <ConfirmDialog
+        open={unsavedOpen}
+        title="$ discard"
+        description="you have unsaved changes. leave anyway?"
+        onConfirm={() => {
+          setUnsavedOpen(false);
+          pendingAction.current?.();
+          pendingAction.current = null;
+        }}
+        onCancel={() => {
+          setUnsavedOpen(false);
+          pendingAction.current = null;
+        }}
+      />
     </div>
   );
 }

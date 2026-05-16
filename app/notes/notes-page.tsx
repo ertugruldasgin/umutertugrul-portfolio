@@ -40,6 +40,8 @@ export default function NotesPage() {
     id: string;
     isFolder: boolean;
   } | null>(null);
+  const [unsavedOpen, setUnsavedOpen] = useState(false);
+  const pendingAction = useRef<(() => void) | null>(null);
 
   const fetchItems = async (parentId: string | null) => {
     const supabase = createClient();
@@ -156,7 +158,7 @@ export default function NotesPage() {
   };
 
   const handleSave = async () => {
-    if (!activeNote || !latestContent.current) return;
+    if (!activeNote || !latestContent.current || saving || !hasChanges) return;
     setSaving(true);
     const supabase = createClient();
     await supabase
@@ -171,10 +173,64 @@ export default function NotesPage() {
   };
 
   const handleBack = () => {
+    if (hasChanges) {
+      pendingAction.current = () => {
+        setActiveNote(null);
+        setHasChanges(false);
+        latestContent.current = "";
+      };
+      setUnsavedOpen(true);
+      return;
+    }
     setActiveNote(null);
     setHasChanges(false);
     latestContent.current = "";
   };
+
+  // ctrl+s save
+  useEffect(() => {
+    if (!activeNote) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  });
+
+  // beforeunload for tab close
+  useEffect(() => {
+    if (!activeNote || !hasChanges) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [activeNote, hasChanges]);
+
+  // popstate for browser back
+  useEffect(() => {
+    if (!activeNote || !hasChanges) return;
+
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
+      pendingAction.current = () => {
+        window.history.back();
+      };
+      setUnsavedOpen(true);
+      window.history.pushState(null, "", window.location.href);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [activeNote, hasChanges]);
 
   // fullscreen editor
   if (activeNote) {
@@ -263,6 +319,21 @@ export default function NotesPage() {
             </div>
           </div>
         </div>
+
+        <ConfirmDialog
+          open={unsavedOpen}
+          title="$ discard"
+          description="you have unsaved changes. leave anyway?"
+          onConfirm={() => {
+            setUnsavedOpen(false);
+            pendingAction.current?.();
+            pendingAction.current = null;
+          }}
+          onCancel={() => {
+            setUnsavedOpen(false);
+            pendingAction.current = null;
+          }}
+        />
       </div>
     );
   }
@@ -346,13 +417,12 @@ export default function NotesPage() {
           <button
             key={f.id}
             onClick={() => navigateToFolder(f)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface transition-colors text-left cursor-pointer group"
+            className="flex items-center gap-3 md:px-3 py-2.5 rounded-lg hover:bg-surface transition-colors text-left cursor-pointer group"
           >
             <Folder className="size-4 sm:size-5 text-primary/60 group-hover:text-primary transition-colors shrink-0" />
             <span className="font-mono text-sm sm:text-base md:text-lg text-foreground group-hover:text-primary transition-colors truncate flex-1">
               {f.title}
             </span>
-
             <span className="text-xs sm:text-sm text-subtle/40 font-mono shrink-0">
               {new Date(f.updated_at).toLocaleDateString("tr-TR", {
                 day: "2-digit",
@@ -360,7 +430,6 @@ export default function NotesPage() {
                 year: "numeric",
               })}
             </span>
-
             {isOwner && (
               <Trash2
                 className="size-4 text-subtle/40 hover:text-danger transition-colors shrink-0"

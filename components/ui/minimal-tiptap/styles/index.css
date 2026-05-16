@@ -279,3 +279,28 @@
 .minimal-tiptap-editor .ProseMirror .ProseMirror-selectednode iframe {
   @apply outline-2 outline-offset-2 outline-primary;
 }
+
+.minimal-tiptap-editor .ProseMirror .text-node,
+.minimal-tiptap-editor .ProseMirror .heading-node,
+.minimal-tiptap-editor .ProseMirror .block-node,
+.minimal-tiptap-editor .ProseMirror .list-node,
+.minimal-tiptap-editor .ProseMirror pre,
+.minimal-tiptap-editor .ProseMirror hr {
+  transition:
+    margin 150ms ease,
+    padding 150ms ease !important;
+}
+
+.minimal-tiptap-editor .ProseMirror p.is-empty::before {
+  transition: opacity 150ms ease !important;
+}
+
+.minimal-tiptap-editor .ProseMirror .ProseMirror-selectednode {
+  transition: outline-color 150ms ease !important;
+}
+
+.minimal-tiptap-editor .ProseMirror a.link {
+  transition:
+    color 150ms ease,
+    text-decoration-color 150ms ease !important;
+}
