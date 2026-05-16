@@ -7,7 +7,6 @@ import { Content } from "@tiptap/react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil1Icon, CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
-import { SubHeader } from "@/components/sub-header";
 import { SectionDivider } from "@/components/section-divider";
 import Link from "next/link";
 
@@ -106,7 +105,7 @@ export default function NowPage() {
                   href="https://nownownow.com/about"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-secondary hover:text-secondary-hover transition-colors"
+                  className="text-primary hover:text-primary-hover transition-colors"
                 >
                   /now
                 </Link>{" "}
@@ -117,10 +116,9 @@ export default function NowPage() {
         />
         {isOwner && !isEditing && (
           <Button
-            variant="ghost"
             size="sm"
             onClick={handleEdit}
-            className="hover:cursor-pointer rounded-lg hover:bg-primary-hover/10"
+            className="hover:cursor-pointer rounded-lg bg-primary hover:bg-primary-hover"
           >
             <Pencil1Icon className="mr-1 size-4" />
             Edit
@@ -179,15 +177,19 @@ export default function NowPage() {
           </div>
         ) : update ? (
           <div>
-            <SubHeader
-              className="text-secondary font-mono text-base font-medium lowercase"
-              title={`last ping: ${formatDate(update.created_at)}${
-                update.location ? ` - ${update.location}` : ""
-              }`}
-            />
-            <div
-              className="minimal-tiptap-editor prose prose-neutral dark:prose-invert max-w-none pt-2"
-              dangerouslySetInnerHTML={{ __html: update.content }}
+            <p className="font-mono text-lg text-primary font-medium lowercase">
+              last ping: {formatDate(update.created_at)}{" "}
+              {update.location && (
+                <span className="whitespace-nowrap">({update.location})</span>
+              )}
+            </p>
+            <MinimalTiptapThree
+              value={update.content}
+              className="w-full"
+              autofocus={true}
+              editable={false}
+              editorClassName=""
+              editorContentClassName=""
             />
           </div>
         ) : null}

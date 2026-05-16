@@ -70,11 +70,13 @@ export const MinimalTiptapThree = ({
   onChange,
   className,
   editorContentClassName,
+  editable = true,
   ...props
 }: MinimalTiptapProps) => {
   const editor = useMinimalTiptapEditor({
     value,
     onUpdate: onChange,
+    editable,
     ...props,
   });
 
@@ -91,12 +93,12 @@ export const MinimalTiptapThree = ({
         className,
       )}
     >
-      <Toolbar editor={editor} />
+      {editable && <Toolbar editor={editor} />}
       <EditorContent
         editor={editor}
         className={cn("minimal-tiptap-editor pt-8", editorContentClassName)}
       />
-      <LinkBubbleMenu editor={editor} />
+      {editable && <LinkBubbleMenu editor={editor} />}
     </MeasuredContainer>
   );
 };
