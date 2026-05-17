@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/page-header";
 import MinimalTiptapThree from "@/components/ui/minimal-tiptap/components/custom/minimal-tiptap-three";
 import { createClient } from "@/lib/supabase/client";
 import { Content } from "@tiptap/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, CheckIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { FolderPlus, Folder, Trash2 } from "lucide-react";
@@ -22,6 +22,11 @@ interface NoteItem {
   is_folder: boolean;
 }
 
+type HistoryState =
+  | { type: "root" }
+  | { type: "folder"; id: string }
+  | { type: "note"; id: string };
+
 export default function NotesPage() {
   const [items, setItems] = useState<NoteItem[]>([]);
   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
@@ -32,6 +37,7 @@ export default function NotesPage() {
   const [hasChanges, setHasChanges] = useState(false);
   const latestContent = useRef<Content>("");
   const titleTimeout = useRef<NodeJS.Timeout | null>(null);
+  const initialized = useRef(false);
 
   const [promptOpen, setPromptOpen] = useState(false);
   const [promptMode, setPromptMode] = useState<"folder" | "note">("folder");
@@ -43,7 +49,23 @@ export default function NotesPage() {
   const [unsavedOpen, setUnsavedOpen] = useState(false);
   const pendingAction = useRef<(() => void) | null>(null);
 
-  const fetchItems = async (parentId: string | null) => {
+  // keep a ref of items for popstate handler
+  const itemsRef = useRef<NoteItem[]>([]);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  const hasChangesRef = useRef(false);
+  useEffect(() => {
+    hasChangesRef.current = hasChanges;
+  }, [hasChanges]);
+
+  const activeNoteRef = useRef<NoteItem | null>(null);
+  useEffect(() => {
+    activeNoteRef.current = activeNote;
+  }, [activeNote]);
+
+  const fetchItems = useCallback(async (parentId: string | null) => {
     const supabase = createClient();
     let query = supabase
       .from("notes")
@@ -59,8 +81,22 @@ export default function NotesPage() {
 
     const { data } = await query;
     if (data) setItems(data as NoteItem[]);
-  };
+  }, []);
 
+  const fetchNoteById = useCallback(
+    async (id: string): Promise<NoteItem | null> => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("id", id)
+        .single();
+      return data as NoteItem | null;
+    },
+    [],
+  );
+
+  // initial load + set history state
   useEffect(() => {
     const init = async () => {
       const supabase = createClient();
@@ -78,27 +114,89 @@ export default function NotesPage() {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) setIsOwner(true);
+
+      const params = new URLSearchParams(window.location.search);
+      const noteId = params.get("n");
+      const folderId = params.get("f");
+
+      if (noteId && list) {
+        const note = (list as NoteItem[]).find((i) => i.id === noteId);
+        if (note) {
+          setActiveNote(note);
+        } else {
+          const fetched = await supabase
+            .from("notes")
+            .select("*")
+            .eq("id", noteId)
+            .single();
+          if (fetched.data) setActiveNote(fetched.data as NoteItem);
+        }
+      } else if (folderId) {
+        setCurrentFolder(folderId);
+        await fetchItems(folderId);
+      }
+
+      window.history.replaceState(
+        noteId
+          ? { type: "note", id: noteId }
+          : folderId
+            ? { type: "folder", id: folderId }
+            : { type: "root" },
+        "",
+        window.location.href,
+      );
     };
 
     init();
+  }, [fetchItems]);
+
+  const navigateToFolder = useCallback(
+    async (folder: NoteItem | null) => {
+      if (folder === null) {
+        setCurrentFolder(null);
+        setFolderPath([]);
+        await fetchItems(null);
+        window.history.pushState(
+          { type: "root" } as HistoryState,
+          "",
+          "/notes",
+        );
+      } else {
+        setCurrentFolder(folder.id);
+        setFolderPath((prev) => {
+          const existingIndex = prev.findIndex((f) => f.id === folder.id);
+          if (existingIndex >= 0) {
+            return prev.slice(0, existingIndex + 1);
+          }
+          return [...prev, folder];
+        });
+        await fetchItems(folder.id);
+        window.history.pushState(
+          { type: "folder", id: folder.id } as HistoryState,
+          "",
+          `/notes?f=${folder.id}`,
+        );
+      }
+    },
+    [fetchItems],
+  );
+
+  const openNote = useCallback((note: NoteItem) => {
+    initialized.current = false;
+    setActiveNote(note);
+    window.history.pushState(
+      { type: "note", id: note.id } as HistoryState,
+      "",
+      `/notes?n=${note.id}`,
+    );
   }, []);
 
-  const navigateToFolder = async (folder: NoteItem | null) => {
-    if (folder === null) {
-      setCurrentFolder(null);
-      setFolderPath([]);
-      await fetchItems(null);
-    } else {
-      setCurrentFolder(folder.id);
-      const existingIndex = folderPath.findIndex((f) => f.id === folder.id);
-      if (existingIndex >= 0) {
-        setFolderPath(folderPath.slice(0, existingIndex + 1));
-      } else {
-        setFolderPath([...folderPath, folder]);
-      }
-      await fetchItems(folder.id);
-    }
-  };
+  const closeNote = useCallback(() => {
+    setActiveNote(null);
+    setHasChanges(false);
+    latestContent.current = "";
+    initialized.current = false;
+  }, []);
 
   const handlePromptConfirm = async (name: string) => {
     setPromptOpen(false);
@@ -137,7 +235,7 @@ export default function NotesPage() {
 
       if (data) {
         setItems((prev) => [...prev, data as NoteItem]);
-        setActiveNote(data as NoteItem);
+        openNote(data as NoteItem);
       }
     }
   };
@@ -148,11 +246,15 @@ export default function NotesPage() {
     const supabase = createClient();
     await supabase.from("notes").delete().eq("id", deleteTarget.id);
     setItems((prev) => prev.filter((d) => d.id !== deleteTarget.id));
-    if (activeNote?.id === deleteTarget.id) setActiveNote(null);
+    if (activeNote?.id === deleteTarget.id) closeNote();
     setDeleteTarget(null);
   };
 
   const handleChange = (content: Content) => {
+    if (!initialized.current) {
+      initialized.current = true;
+      return;
+    }
     latestContent.current = content;
     setHasChanges(true);
   };
@@ -175,16 +277,14 @@ export default function NotesPage() {
   const handleBack = () => {
     if (hasChanges) {
       pendingAction.current = () => {
-        setActiveNote(null);
-        setHasChanges(false);
-        latestContent.current = "";
+        closeNote();
+        window.history.back();
       };
       setUnsavedOpen(true);
       return;
     }
-    setActiveNote(null);
-    setHasChanges(false);
-    latestContent.current = "";
+    closeNote();
+    window.history.back();
   };
 
   // ctrl+s save
@@ -214,23 +314,51 @@ export default function NotesPage() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [activeNote, hasChanges]);
 
-  // popstate for browser back
+  // unified popstate: navigation + unsaved guard
   useEffect(() => {
-    if (!activeNote || !hasChanges) return;
+    const handlePopState = async (e: PopStateEvent) => {
+      const state = e.state as HistoryState | null;
 
-    window.history.pushState(null, "", window.location.href);
+      if (hasChangesRef.current && activeNoteRef.current) {
+        window.history.pushState(
+          { type: "note", id: activeNoteRef.current.id } as HistoryState,
+          "",
+          `/notes?n=${activeNoteRef.current.id}`,
+        );
+        pendingAction.current = () => {
+          closeNote();
+          window.history.back();
+        };
+        setUnsavedOpen(true);
+        return;
+      }
 
-    const handlePopState = () => {
-      pendingAction.current = () => {
-        window.history.back();
-      };
-      setUnsavedOpen(true);
-      window.history.pushState(null, "", window.location.href);
+      if (!state || state.type === "root") {
+        setActiveNote(null);
+        setCurrentFolder(null);
+        setFolderPath([]);
+        initialized.current = false;
+        await fetchItems(null);
+      } else if (state.type === "folder") {
+        setActiveNote(null);
+        setCurrentFolder(state.id);
+        initialized.current = false;
+        await fetchItems(state.id);
+      } else if (state.type === "note") {
+        let note = itemsRef.current.find((i) => i.id === state.id) || null;
+        if (!note) {
+          note = await fetchNoteById(state.id);
+        }
+        if (note) {
+          initialized.current = false;
+          setActiveNote(note);
+        }
+      }
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [activeNote, hasChanges]);
+  }, [fetchItems, fetchNoteById, closeNote]);
 
   // fullscreen editor
   if (activeNote) {
@@ -251,8 +379,16 @@ export default function NotesPage() {
                     <span className="select-none">/</span>
                     <button
                       onClick={() => {
-                        navigateToFolder(f);
-                        handleBack();
+                        if (hasChanges) {
+                          pendingAction.current = () => {
+                            closeNote();
+                            navigateToFolder(f);
+                          };
+                          setUnsavedOpen(true);
+                        } else {
+                          closeNote();
+                          navigateToFolder(f);
+                        }
                       }}
                       className="hover:text-primary transition-colors font-mono cursor-pointer"
                     >
@@ -447,7 +583,7 @@ export default function NotesPage() {
         {notes.map((n) => (
           <button
             key={n.id}
-            onClick={() => setActiveNote(n)}
+            onClick={() => openNote(n)}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface transition-colors text-left cursor-pointer group"
           >
             <FileTextIcon className="size-4 sm:size-5 text-subtle/60 group-hover:text-primary transition-colors shrink-0" />

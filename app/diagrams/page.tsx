@@ -3,12 +3,16 @@
 import { PageHeader } from "@/components/page-header";
 import { DiagramEditor } from "@/components/diagram-editor";
 import { createClient } from "@/lib/supabase/client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, CheckIcon, FileIcon } from "@radix-ui/react-icons";
 import { FolderPlus, Folder, Trash2 } from "lucide-react";
 import { PromptDialog } from "@/components/prompt-dialog";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+
+export const metada = {
+  title: "diagrams",
+};
 
 interface DiagramItem {
   id: string;
@@ -22,6 +26,11 @@ interface DiagramItem {
   parent_id: string | null;
   is_folder: boolean;
 }
+
+type HistoryState =
+  | { type: "root" }
+  | { type: "folder"; id: string }
+  | { type: "diagram"; id: string };
 
 export default function DiagramsPage() {
   const [items, setItems] = useState<DiagramItem[]>([]);
@@ -45,8 +54,25 @@ export default function DiagramsPage() {
     id: string;
     isFolder: boolean;
   } | null>(null);
+  const [unsavedOpen, setUnsavedOpen] = useState(false);
+  const pendingAction = useRef<(() => void) | null>(null);
 
-  const fetchItems = async (parentId: string | null) => {
+  const itemsRef = useRef<DiagramItem[]>([]);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
+  const hasChangesRef = useRef(false);
+  useEffect(() => {
+    hasChangesRef.current = hasChanges;
+  }, [hasChanges]);
+
+  const activeDiagramRef = useRef<DiagramItem | null>(null);
+  useEffect(() => {
+    activeDiagramRef.current = activeDiagram;
+  }, [activeDiagram]);
+
+  const fetchItems = useCallback(async (parentId: string | null) => {
     const supabase = createClient();
     let query = supabase
       .from("diagrams")
@@ -62,8 +88,22 @@ export default function DiagramsPage() {
 
     const { data } = await query;
     if (data) setItems(data as DiagramItem[]);
-  };
+  }, []);
 
+  const fetchDiagramById = useCallback(
+    async (id: string): Promise<DiagramItem | null> => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("diagrams")
+        .select("*")
+        .eq("id", id)
+        .single();
+      return data as DiagramItem | null;
+    },
+    [],
+  );
+
+  // initial load + set history state
   useEffect(() => {
     const init = async () => {
       const supabase = createClient();
@@ -81,27 +121,89 @@ export default function DiagramsPage() {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) setIsOwner(true);
+
+      const params = new URLSearchParams(window.location.search);
+      const diagramId = params.get("d");
+      const folderId = params.get("f");
+
+      if (diagramId && list) {
+        const diagram = (list as DiagramItem[]).find((i) => i.id === diagramId);
+        if (diagram) {
+          setActiveDiagram(diagram);
+        } else {
+          const fetched = await supabase
+            .from("diagrams")
+            .select("*")
+            .eq("id", diagramId)
+            .single();
+          if (fetched.data) setActiveDiagram(fetched.data as DiagramItem);
+        }
+      } else if (folderId) {
+        setCurrentFolder(folderId);
+        await fetchItems(folderId);
+      }
+
+      window.history.replaceState(
+        diagramId
+          ? { type: "diagram", id: diagramId }
+          : folderId
+            ? { type: "folder", id: folderId }
+            : { type: "root" },
+        "",
+        window.location.href,
+      );
     };
 
     init();
+  }, [fetchItems]);
+
+  const navigateToFolder = useCallback(
+    async (folder: DiagramItem | null) => {
+      if (folder === null) {
+        setCurrentFolder(null);
+        setFolderPath([]);
+        await fetchItems(null);
+        window.history.pushState(
+          { type: "root" } as HistoryState,
+          "",
+          "/diagrams",
+        );
+      } else {
+        setCurrentFolder(folder.id);
+        setFolderPath((prev) => {
+          const existingIndex = prev.findIndex((f) => f.id === folder.id);
+          if (existingIndex >= 0) {
+            return prev.slice(0, existingIndex + 1);
+          }
+          return [...prev, folder];
+        });
+        await fetchItems(folder.id);
+        window.history.pushState(
+          { type: "folder", id: folder.id } as HistoryState,
+          "",
+          `/diagrams?f=${folder.id}`,
+        );
+      }
+    },
+    [fetchItems],
+  );
+
+  const openDiagram = useCallback((diagram: DiagramItem) => {
+    setActiveDiagram(diagram);
+    setHasChanges(false);
+    latestData.current = null;
+    window.history.pushState(
+      { type: "diagram", id: diagram.id } as HistoryState,
+      "",
+      `/diagrams?d=${diagram.id}`,
+    );
   }, []);
 
-  const navigateToFolder = async (folder: DiagramItem | null) => {
-    if (folder === null) {
-      setCurrentFolder(null);
-      setFolderPath([]);
-      await fetchItems(null);
-    } else {
-      setCurrentFolder(folder.id);
-      const existingIndex = folderPath.findIndex((f) => f.id === folder.id);
-      if (existingIndex >= 0) {
-        setFolderPath(folderPath.slice(0, existingIndex + 1));
-      } else {
-        setFolderPath([...folderPath, folder]);
-      }
-      await fetchItems(folder.id);
-    }
-  };
+  const closeDiagram = useCallback(() => {
+    setActiveDiagram(null);
+    setHasChanges(false);
+    latestData.current = null;
+  }, []);
 
   const handlePromptConfirm = async (name: string) => {
     setPromptOpen(false);
@@ -144,7 +246,7 @@ export default function DiagramsPage() {
 
       if (data) {
         setItems((prev) => [...prev, data as DiagramItem]);
-        setActiveDiagram(data as DiagramItem);
+        openDiagram(data as DiagramItem);
       }
     }
   };
@@ -155,7 +257,7 @@ export default function DiagramsPage() {
     const supabase = createClient();
     await supabase.from("diagrams").delete().eq("id", deleteTarget.id);
     setItems((prev) => prev.filter((d) => d.id !== deleteTarget.id));
-    if (activeDiagram?.id === deleteTarget.id) setActiveDiagram(null);
+    if (activeDiagram?.id === deleteTarget.id) closeDiagram();
     setDeleteTarget(null);
   };
 
@@ -178,7 +280,7 @@ export default function DiagramsPage() {
   };
 
   const handleSave = async () => {
-    if (!activeDiagram || !latestData.current) return;
+    if (!activeDiagram || !latestData.current || saving || !hasChanges) return;
     setSaving(true);
     const supabase = createClient();
     await supabase
@@ -195,10 +297,92 @@ export default function DiagramsPage() {
   };
 
   const handleBack = () => {
-    setActiveDiagram(null);
-    setHasChanges(false);
-    latestData.current = null;
+    if (hasChanges) {
+      pendingAction.current = () => {
+        closeDiagram();
+        window.history.back();
+      };
+      setUnsavedOpen(true);
+      return;
+    }
+    closeDiagram();
+    window.history.back();
   };
+
+  // ctrl+s save
+  useEffect(() => {
+    if (!activeDiagram) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  });
+
+  // beforeunload for tab close
+  useEffect(() => {
+    if (!activeDiagram || !hasChanges) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [activeDiagram, hasChanges]);
+
+  // unified popstate: navigation + unsaved guard
+  useEffect(() => {
+    const handlePopState = async (e: PopStateEvent) => {
+      const state = e.state as HistoryState | null;
+
+      if (hasChangesRef.current && activeDiagramRef.current) {
+        window.history.pushState(
+          {
+            type: "diagram",
+            id: activeDiagramRef.current.id,
+          } as HistoryState,
+          "",
+          `/diagrams?d=${activeDiagramRef.current.id}`,
+        );
+        pendingAction.current = () => {
+          closeDiagram();
+          window.history.back();
+        };
+        setUnsavedOpen(true);
+        return;
+      }
+
+      if (!state || state.type === "root") {
+        setActiveDiagram(null);
+        setCurrentFolder(null);
+        setFolderPath([]);
+        await fetchItems(null);
+      } else if (state.type === "folder") {
+        setActiveDiagram(null);
+        setCurrentFolder(state.id);
+        await fetchItems(state.id);
+      } else if (state.type === "diagram") {
+        let diagram = itemsRef.current.find((i) => i.id === state.id) || null;
+        if (!diagram) {
+          diagram = await fetchDiagramById(state.id);
+        }
+        if (diagram) {
+          setActiveDiagram(diagram);
+          setHasChanges(false);
+          latestData.current = null;
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [fetchItems, fetchDiagramById, closeDiagram]);
 
   // fullscreen editor
   if (activeDiagram) {
@@ -218,8 +402,16 @@ export default function DiagramsPage() {
                   <span className="select-none">/</span>
                   <button
                     onClick={() => {
-                      navigateToFolder(f);
-                      handleBack();
+                      if (hasChanges) {
+                        pendingAction.current = () => {
+                          closeDiagram();
+                          navigateToFolder(f);
+                        };
+                        setUnsavedOpen(true);
+                      } else {
+                        closeDiagram();
+                        navigateToFolder(f);
+                      }
                     }}
                     className="hover:text-primary transition-colors font-mono cursor-pointer"
                   >
@@ -280,6 +472,21 @@ export default function DiagramsPage() {
             viewMode={!isOwner}
           />
         </div>
+
+        <ConfirmDialog
+          open={unsavedOpen}
+          title="$ discard"
+          description="you have unsaved changes. leave anyway?"
+          onConfirm={() => {
+            setUnsavedOpen(false);
+            pendingAction.current?.();
+            pendingAction.current = null;
+          }}
+          onCancel={() => {
+            setUnsavedOpen(false);
+            pendingAction.current = null;
+          }}
+        />
       </div>
     );
   }
@@ -386,7 +593,7 @@ export default function DiagramsPage() {
         {diagrams.map((d) => (
           <button
             key={d.id}
-            onClick={() => setActiveDiagram(d)}
+            onClick={() => openDiagram(d)}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface transition-colors text-left cursor-pointer group"
           >
             <FileIcon className="size-4 sm:size-5 text-subtle/60 group-hover:text-primary transition-colors shrink-0" />

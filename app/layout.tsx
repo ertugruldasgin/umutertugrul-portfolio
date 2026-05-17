@@ -30,7 +30,7 @@ const geist = Geist({
 export const metadata: Metadata = {
   title: {
     default: "Umut Ertugrul",
-    template: "Umut's %s",
+    template: "%s | Umut Ertugrul",
   },
   description: "computer engineering sophomore, builder, homelab tinkerer.",
   metadataBase: new URL("https://umutertugrul.com"),
