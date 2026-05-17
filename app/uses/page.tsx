@@ -121,16 +121,16 @@ export default function UsesPage() {
             <ul className="flex flex-col gap-2">
               <li>Tailscale</li>
               <li>Coolify</li>
+              <li>Self-Hosted Supabase</li>
               <li>AdGuard Home</li>
               <li>Docker</li>
             </ul>
           </TerminalCard>
           <TerminalCard title="daily" className="border-info text-info">
             <ul className="flex flex-col gap-2">
+              <li>Self-Workspace</li>
               <li>LibreOffice</li>
               <li>Brave</li>
-              <li>Excalidraw</li>
-              <li>Mattermost</li>
             </ul>
           </TerminalCard>
           <TerminalCard
@@ -140,7 +140,7 @@ export default function UsesPage() {
             <ul className="flex flex-col gap-2">
               <li>tmux</li>
               <li>LocalSend</li>
-              <li>Self Hosted Supabase</li>
+              <li>Self-Workspace</li>
             </ul>
           </TerminalCard>
         </div>

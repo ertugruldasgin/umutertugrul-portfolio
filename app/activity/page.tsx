@@ -37,13 +37,7 @@ export default async function ActivityPage() {
         description={<p>a trail of things i&apos;ve touched recently</p>}
       />
 
-      {contributions ? (
-        <ContributionGraph data={contributions} />
-      ) : (
-        <p className="text-sm text-subtle italic">
-          Couldn&apos;t load contribution graph.
-        </p>
-      )}
+      {contributions && <ContributionGraph data={contributions} />}
 
       <div className="block md:hidden">
         <SectionDivider title="recent commits" />

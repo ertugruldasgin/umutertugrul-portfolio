@@ -3,18 +3,21 @@ import { formatDistanceToNow } from "date-fns";
 
 interface RecentCommitsProps {
   commits: RecentCommit[];
+  limit?: number;
   showHeader?: boolean;
 }
 
-export function RecentCommits({ commits }: RecentCommitsProps) {
+export function RecentCommits({ commits, limit }: RecentCommitsProps) {
   if (commits.length === 0) {
     return <p className="text-sm text-subtle italic">No recent commits.</p>;
   }
 
+  const displayed = limit ? commits.slice(0, limit) : commits;
+
   return (
     <div className="flex flex-col gap-4">
       <ul className="flex flex-col gap-1">
-        {commits.map((commit) => (
+        {displayed.map((commit) => (
           <li key={commit.sha} className="text-sm">
             <a
               href={commit.url}

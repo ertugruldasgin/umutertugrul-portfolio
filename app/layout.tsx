@@ -57,6 +57,7 @@ export const metadata: Metadata = {
 
 const github = "https://github.com/ertugruldasgin";
 const huggingface = "https://huggingface.co/umutertugrul";
+const discord = "https://discordapp.com/users/442301448215068672";
 const email = "ertugruldasgin@gmail.com";
 
 export default function RootLayout({
@@ -83,7 +84,12 @@ export default function RootLayout({
           <CursorAura />
           <PathBreadcrumb />
           <div className="pt-10 w-full pb-8">{children}</div>
-          <Footer github={github} huggingface={huggingface} email={email} />
+          <Footer
+            github={github}
+            huggingface={huggingface}
+            discord={discord}
+            email={email}
+          />
         </TooltipProvider>
       </body>
     </html>

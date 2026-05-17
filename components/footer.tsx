@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SiGithub, SiHuggingface } from "@icons-pack/react-simple-icons";
+import {
+  SiDiscord,
+  SiGithub,
+  SiHuggingface,
+} from "@icons-pack/react-simple-icons";
 import { Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -10,10 +14,11 @@ import { createClient } from "@/lib/supabase/client";
 interface FooterProps {
   github?: string;
   huggingface?: string;
+  discord?: string;
   email?: string;
 }
 
-export function Footer({ github, huggingface, email }: FooterProps) {
+export function Footer({ github, huggingface, discord, email }: FooterProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const currentPath = usePathname();
 
@@ -66,6 +71,11 @@ export function Footer({ github, huggingface, email }: FooterProps) {
           {huggingface && (
             <Link href={huggingface} target="_blank" rel="noopener noreferrer">
               <SiHuggingface className="size-5 hover:text-warning transition-colors" />
+            </Link>
+          )}
+          {discord && (
+            <Link href={discord} target="_blank" rel="noopener noreferrer">
+              <SiDiscord className="size-5 hover:text-[#5865F2] transition-colors" />
             </Link>
           )}
           {email && (
