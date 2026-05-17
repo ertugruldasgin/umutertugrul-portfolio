@@ -1,15 +1,15 @@
-import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export interface LinkEditorProps extends React.ComponentProps<"div"> {
-  defaultUrl?: string
-  defaultText?: string
-  defaultIsNewTab?: boolean
-  onSave: (url: string, text?: string, isNewTab?: boolean) => void
+  defaultUrl?: string;
+  defaultText?: string;
+  defaultIsNewTab?: boolean;
+  onSave: (url: string, text?: string, isNewTab?: boolean) => void;
 }
 
 export const LinkEditBlock = ({
@@ -19,52 +19,54 @@ export const LinkEditBlock = ({
   defaultText,
   className,
 }: LinkEditorProps) => {
-  const formRef = React.useRef<HTMLDivElement>(null)
-  const [url, setUrl] = React.useState(defaultUrl || "")
-  const [text, setText] = React.useState(defaultText || "")
-  const [isNewTab, setIsNewTab] = React.useState(defaultIsNewTab || false)
+  const formRef = React.useRef<HTMLDivElement>(null);
+  const [url, setUrl] = React.useState(defaultUrl || "");
+  const [text, setText] = React.useState(defaultText || "");
+  const [isNewTab, setIsNewTab] = React.useState(defaultIsNewTab || false);
 
   const handleSave = React.useCallback(
     (e: React.FormEvent) => {
-      e.preventDefault()
+      e.preventDefault();
       if (formRef.current) {
         const isValid = Array.from(
-          formRef.current.querySelectorAll("input")
-        ).every((input) => input.checkValidity())
+          formRef.current.querySelectorAll("input"),
+        ).every((input) => input.checkValidity());
 
         if (isValid) {
-          onSave(url, text, isNewTab)
+          onSave(url, text, isNewTab);
         } else {
           formRef.current.querySelectorAll("input").forEach((input) => {
             if (!input.checkValidity()) {
-              input.reportValidity()
+              input.reportValidity();
             }
-          })
+          });
         }
       }
     },
-    [onSave, url, text, isNewTab]
-  )
+    [onSave, url, text, isNewTab],
+  );
 
   return (
     <div ref={formRef}>
       <div className={cn("space-y-4", className)}>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label>URL</Label>
           <Input
             type="url"
             required
             placeholder="Enter URL"
+            className="rounded-md"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label>Display Text (optional)</Label>
           <Input
             type="text"
             placeholder="Enter display text"
+            className="rounded-md"
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
@@ -76,15 +78,19 @@ export const LinkEditBlock = ({
         </div>
 
         <div className="flex justify-end space-x-2">
-          <Button type="button" onClick={handleSave}>
-            Save
+          <Button
+            type="button"
+            onClick={handleSave}
+            className="rounded-lg hover:cursor-pointer"
+          >
+            save
           </Button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-LinkEditBlock.displayName = "LinkEditBlock"
+LinkEditBlock.displayName = "LinkEditBlock";
 
-export default LinkEditBlock
+export default LinkEditBlock;

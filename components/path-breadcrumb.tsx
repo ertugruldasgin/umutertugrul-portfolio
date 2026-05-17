@@ -27,7 +27,7 @@ export function PathBreadcrumb() {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="absolute text-sm sm:text-base select-none"
+      className="absolute text-sm sm:text-base select-none overflow-x-auto scrollbar-hide max-w-[calc(100vw-2rem)] whitespace-nowrap"
     >
       <span className="text-base md:text-lg text-subtle">
         {segments.length === 0 ? (

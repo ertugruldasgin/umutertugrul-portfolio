@@ -41,22 +41,32 @@ export const LinkPopoverBlock: React.FC<LinkPopoverBlockProps> = ({
   return (
     <div className="bg-card flex overflow-hidden rounded-lg! shadow-lg">
       <div className="inline-flex items-center">
-        <ToolbarButton tooltip="Edit link" onClick={onEdit}>
+        <ToolbarButton
+          className="hover:cursor-pointer"
+          tooltip="Edit link"
+          onClick={onEdit}
+        >
           Edit link
         </ToolbarButton>
         <Separator orientation="vertical" />
         <ToolbarButton
+          className="hover:cursor-pointer"
           tooltip="Open link in a new tab"
           onClick={handleOpenLink}
         >
           <ExternalLinkIcon />
         </ToolbarButton>
         <Separator orientation="vertical" />
-        <ToolbarButton tooltip="Clear link" onClick={onClear}>
+        <ToolbarButton
+          className="hover:cursor-pointer"
+          tooltip="Clear link"
+          onClick={onClear}
+        >
           <LinkBreak2Icon />
         </ToolbarButton>
         <Separator orientation="vertical" />
         <ToolbarButton
+          className="hover:cursor-pointer"
           tooltip={copyTitle}
           onClick={handleCopy}
           tooltipOptions={{

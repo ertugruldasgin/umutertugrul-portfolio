@@ -105,6 +105,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      blogs: {
+        Row: {
+          id: string;
+          title: string;
+          slug: string;
+          content: string;
+          tags: string[];
+          published: boolean;
+          user_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title?: string;
+          slug: string;
+          content?: string;
+          tags?: string[];
+          published?: boolean;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          slug?: string;
+          content?: string;
+          tags?: string[];
+          published?: boolean;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
