@@ -10,7 +10,7 @@ import { FolderPlus, Folder, Trash2 } from "lucide-react";
 import { PromptDialog } from "@/components/prompt-dialog";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
-export const metada = {
+export const metadata = {
   title: "diagrams",
 };
 
