@@ -107,6 +107,8 @@ export default function BlogPage() {
   const sectionTitle =
     published.length == 1 ? "1 blog" : `${published.length} blogs`;
 
+  const draftTitle = drafts.length == 1 ? "1 draft" : `${drafts.length} drafts`;
+
   return (
     <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
       <div className="flex flex-row items-start justify-between">
@@ -124,10 +126,10 @@ export default function BlogPage() {
         )}
       </div>
 
-      {isOwner && drafts.length >= 0 && (
+      {isOwner && drafts.length > 0 && (
         <div className="flex flex-col gap-2">
           <SectionDivider
-            title="drafts"
+            title={draftTitle}
             titleClassName="text-warning"
             lineClassName="bg-warning"
           />
