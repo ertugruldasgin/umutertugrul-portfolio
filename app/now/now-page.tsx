@@ -270,6 +270,11 @@ export default function NowPage() {
         <SectionDivider title="if you are still curious" />
         <div className="grid grid-cols-1 sm:grid-cols-2 py-4 gap-4">
           <SuggestItem
+            href="/blog"
+            title="blog"
+            description="things i think about"
+          />
+          <SuggestItem
             href="/uses"
             title="uses"
             description="what i reach for, when i sit down"
