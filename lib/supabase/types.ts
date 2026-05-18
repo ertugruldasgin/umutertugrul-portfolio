@@ -141,6 +141,97 @@ export type Database = {
         };
         Relationships: [];
       };
+      books: {
+        Row: {
+          id: string;
+          slug: string;
+          title: string;
+          author: string;
+          cover_url: string | null;
+          status: "reading" | "finished" | "dropped" | "queued";
+          started_at: string | null;
+          finished_at: string | null;
+          rating: number | null;
+          tags: string[];
+          total_pages: number | null;
+          current_page: number;
+          user_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          title: string;
+          author: string;
+          cover_url?: string | null;
+          status?: "reading" | "finished" | "dropped" | "queued";
+          started_at?: string | null;
+          finished_at?: string | null;
+          rating?: number | null;
+          tags?: string[];
+          total_pages?: number | null;
+          current_page?: number;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          title?: string;
+          author?: string;
+          cover_url?: string | null;
+          status?: "reading" | "finished" | "dropped" | "queued";
+          started_at?: string | null;
+          finished_at?: string | null;
+          rating?: number | null;
+          tags?: string[];
+          total_pages?: number | null;
+          current_page?: number;
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
+      book_notes: {
+        Row: {
+          id: string;
+          book_id: string;
+          page: number | null;
+          chapter: string | null;
+          content: string;
+          type: "highlight" | "thought" | "question" | "summary";
+          user_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          book_id: string;
+          page?: number | null;
+          chapter?: string | null;
+          content?: string;
+          type?: "highlight" | "thought" | "question" | "summary";
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          book_id?: string;
+          page?: number | null;
+          chapter?: string | null;
+          content?: string;
+          type?: "highlight" | "thought" | "question" | "summary";
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
