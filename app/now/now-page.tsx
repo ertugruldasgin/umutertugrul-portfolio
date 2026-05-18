@@ -280,9 +280,9 @@ export default function NowPage() {
             description="what i reach for, when i sit down"
           />
           <SuggestItem
-            href="/activity"
-            title="activity"
-            description="a trail of things i've touched recently"
+            href="/reading"
+            title="reading"
+            description="digital bookshelf"
           />
           <SuggestItem
             href="/whoami"

@@ -5,6 +5,8 @@ import { HuggingFaceStats } from "@/components/huggingface-stats";
 import { RecentCommits } from "@/components/recent-commits";
 import { SectionDivider } from "@/components/section-divider";
 import { TerminalCard } from "@/components/terminal-card";
+import { CurrentlyReading } from "@/components/currently-reading";
+import { createClient } from "@/lib/supabase/client";
 import {
   fetchContributions,
   fetchRecentCommits,
@@ -18,15 +20,32 @@ export default async function Home() {
   let contributions = null;
   let commits: RecentCommit[] = [];
   let hfStats: HFStats | null = null;
+  let readingBooks: any[] = [];
 
   try {
-    [contributions, commits, hfStats] = await Promise.all([
+    const supabase = createClient();
+    const booksPromise = supabase
+      .from("books")
+      .select("*")
+      .eq("status", "reading")
+      .order("updated_at", { ascending: false });
+
+    const [contribRes, commitsRes, hfRes, booksRes] = await Promise.all([
       fetchContributions(),
       fetchRecentCommits(5),
       fetchHFDatasets(),
+      booksPromise,
     ]);
+
+    contributions = contribRes;
+    commits = commitsRes;
+    hfStats = hfRes;
+
+    if (booksRes.data) {
+      readingBooks = booksRes.data;
+    }
   } catch (error) {
-    console.error("GitHub fetch failed:", error);
+    console.error("Fetch failed:", error);
   }
 
   return (
@@ -50,14 +69,31 @@ export default async function Home() {
         </p>
       </TerminalCard>
 
+      <div className="block md:hidden">
+        <SectionDivider
+          title="currently reading"
+          titleClassName="text-secondary"
+          lineClassName="bg-secondary"
+          className="mb-2"
+        />
+        <CurrentlyReading books={readingBooks} />
+      </div>
+
+      <TerminalCard
+        title="currently reading"
+        className="border-secondary text-secondary hidden md:block px-2"
+      >
+        <CurrentlyReading books={readingBooks} />
+      </TerminalCard>
+
       {contributions && <ContributionGraph data={contributions} />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex flex-col flex-1 gap-2">
+        <div className="flex flex-col gap-2">
           <SectionDivider title="recent commits" />
           <RecentCommits commits={commits} limit={3} />
         </div>
-        <div className="flex flex-col flex-1 gap-2">
+        <div className="flex flex-col gap-2">
           <SectionDivider
             title="datasets"
             titleClassName="text-warning"

@@ -8,13 +8,16 @@ interface ContributionGraphProps {
   data: ContributionData;
 }
 
-const CELL_SIZE = 11;
-const CELL_GAP = 3;
+const CELL_SIZE = 0.775;
+const CELL_GAP = 0.125;
+const CELL_TOTAL = CELL_SIZE + CELL_GAP;
 
 export function ContributionGraph({ data }: ContributionGraphProps) {
   const weeksCount = data.weeks.length;
-  const width = weeksCount * (CELL_SIZE + CELL_GAP);
-  const height = 7 * (CELL_SIZE + CELL_GAP);
+
+  const width = `${weeksCount * CELL_TOTAL}rem`;
+  const height = `${7 * CELL_TOTAL}rem`;
+
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -45,11 +48,11 @@ export function ContributionGraph({ data }: ContributionGraphProps) {
             week.days.map((day, dayIndex) => (
               <rect
                 key={`${weekIndex}-${dayIndex}`}
-                x={weekIndex * (CELL_SIZE + CELL_GAP)}
-                y={dayIndex * (CELL_SIZE + CELL_GAP)}
-                width={CELL_SIZE}
-                height={CELL_SIZE}
-                rx={2}
+                x={`${weekIndex * CELL_TOTAL}rem`}
+                y={`${dayIndex * CELL_TOTAL}rem`}
+                width={`${CELL_SIZE}rem`}
+                height={`${CELL_SIZE}rem`}
+                rx={`${0.125}rem`}
                 className={cellFillClass(day.level)}
                 aria-label={`${day.count} contributions on ${day.date}`}
                 onMouseEnter={(e) => {
@@ -69,7 +72,7 @@ export function ContributionGraph({ data }: ContributionGraphProps) {
 
         {tooltip && (
           <div
-            className="fixed z-50 pointer-events-none px-2 py-1 rounded-lg border border-border/70 bg-surface/20 backdrop-blur-sm text-xs font-mono shadow-lg select-none"
+            className="hidden md:block fixed z-50 pointer-events-none px-2 py-1 rounded-lg border border-border/70 bg-surface/20 backdrop-blur-sm text-xs font-mono shadow-lg select-none whitespace-nowrap"
             style={{
               left: tooltip.x,
               top: tooltip.y - 8,

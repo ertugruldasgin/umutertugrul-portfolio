@@ -10,7 +10,7 @@ export default async function AsciiLogo() {
   return (
     <pre
       aria-label="Umut Ertuğrul"
-      className="text-primary whitespace-pre-wrap text-center select-none"
+      className="text-primary whitespace-pre-wrap text-center select-none leading-tight"
     >
       {art}
     </pre>

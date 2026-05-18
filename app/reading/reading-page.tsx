@@ -50,11 +50,30 @@ const STATUS_LABELS: Record<Book["status"], string> = {
   dropped: "dropped",
 };
 
-const STATUS_COLORS: Record<Book["status"], string> = {
-  reading: "warning",
-  finished: "primary",
-  queued: "info",
-  dropped: "syntax-comment",
+const STATUS_STYLES: Record<
+  Book["status"],
+  { text: string; bg: string; hoverText: string }
+> = {
+  reading: {
+    text: "text-warning",
+    bg: "bg-warning",
+    hoverText: "group-hover:text-warning",
+  },
+  finished: {
+    text: "text-primary",
+    bg: "bg-primary",
+    hoverText: "group-hover:text-primary",
+  },
+  queued: {
+    text: "text-info",
+    bg: "bg-info",
+    hoverText: "group-hover:text-info",
+  },
+  dropped: {
+    text: "text-subtle",
+    bg: "bg-subtle",
+    hoverText: "group-hover:text-subtle",
+  },
 };
 
 export default function ReadingPage() {
@@ -63,8 +82,6 @@ export default function ReadingPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-
-  // add form
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
 
@@ -134,7 +151,7 @@ export default function ReadingPage() {
   return (
     <div className="flex flex-col gap-6 md:gap-12 flex-1 w-full max-w-3xl mx-auto">
       <div className="flex items-start justify-between">
-        <PageHeader title="reading" description="books and notes." />
+        <PageHeader title="reading" description="digital bookshelf" />
         {isOwner && (
           <Button
             size="sm"
@@ -198,8 +215,8 @@ export default function ReadingPage() {
         <div key={group.status} className="flex flex-col gap-1">
           <SectionDivider
             title={group.label}
-            titleClassName={`text-${STATUS_COLORS[group.status]}`}
-            lineClassName={`bg-${STATUS_COLORS[group.status]}`}
+            titleClassName={STATUS_STYLES[group.status].text}
+            lineClassName={STATUS_STYLES[group.status].bg}
             className="mb-2"
           />
           {group.books.map((book) => (
@@ -224,7 +241,9 @@ export default function ReadingPage() {
                 </div>
               )}
               <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                <span className="font-mono text-sm sm:text-base text-foreground group-hover:text-primary transition-colors truncate">
+                <span
+                  className={`font-mono text-sm sm:text-base text-foreground ${STATUS_STYLES[book.status].hoverText} transition-colors truncate`}
+                >
                   {book.title}
                 </span>
                 <span className="text-xs text-subtle/60 font-mono truncate">
