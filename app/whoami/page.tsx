@@ -6,6 +6,13 @@ import { WhoAmIItem } from "@/components/whoami-item";
 
 export const metadata = {
   title: "whoami",
+  description:
+    "Umut Ertuğrul Daşgın — Computer Engineering student at Yeditepe University. Undergraduate researcher at PerSystLab, building Turkish NLP datasets, local LLM pipelines, and full-stack web applications.",
+  openGraph: {
+    title: "Who is Umut Ertugrul?",
+    description:
+      "Computer Engineering student at Yeditepe University. Undergraduate researcher, Turkish NLP dataset publisher, and full-stack developer.",
+  },
 };
 
 const educations = [

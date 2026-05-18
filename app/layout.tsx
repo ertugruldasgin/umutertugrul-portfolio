@@ -59,6 +59,36 @@ const github = "https://github.com/ertugruldasgin";
 const huggingface = "https://huggingface.co/umutertugrul";
 const discord = "https://discordapp.com/users/442301448215068672";
 const email = "ertugruldasgin@gmail.com";
+const linkedin = "https://www.linkedin.com/in/umutertugruldasgin/";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Umut Ertuğrul Daşgın",
+  alternateName: ["Umut Ertugrul", "Umut Ertuğrul"],
+  url: "https://umutertugrul.com",
+  jobTitle: "Computer Engineering Student",
+  affiliation: [
+    {
+      "@type": "EducationalOrganization",
+      name: "Yeditepe University",
+    },
+    {
+      "@type": "Organization",
+      name: "PerSystLab",
+    },
+  ],
+  knowsAbout: [
+    "Software Engineering",
+    "Full Stack Web Development",
+    "Natural Language Processing",
+    "Turkish NLP Datasets",
+    "Large Language Models",
+    "Web Scraping & Data Collection",
+    "Homelab & Self-Hosting",
+  ],
+  sameAs: [linkedin, github, huggingface, discord],
+};
 
 export default function RootLayout({
   children,
@@ -79,6 +109,12 @@ export default function RootLayout({
         geist.variable,
       )}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full bg-background text-foreground flex flex-col p-2! md:p-4! md:border border-primary rounded-xl font-mono antialiased">
         <TooltipProvider>
           <CursorAura />
