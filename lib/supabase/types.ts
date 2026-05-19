@@ -195,7 +195,6 @@ export type Database = {
         };
         Relationships: [];
       };
-
       book_notes: {
         Row: {
           id: string;
@@ -226,6 +225,54 @@ export type Database = {
           chapter?: string | null;
           content?: string;
           type?: "highlight" | "thought" | "question" | "summary";
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      movies: {
+        Row: {
+          id: string;
+          title: string;
+          director: string | null;
+          year: number | null;
+          poster_url: string | null;
+          country_code: string;
+          type: string;
+          rating: number | null;
+          rank_in_country: number | null;
+          tags: string[];
+          user_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          director?: string | null;
+          year?: number | null;
+          poster_url?: string | null;
+          country_code: string;
+          type?: string;
+          rating?: number | null;
+          rank_in_country?: number | null;
+          tags?: string[];
+          user_id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          director?: string | null;
+          year?: number | null;
+          poster_url?: string | null;
+          country_code?: string;
+          type?: string;
+          rating?: number | null;
+          rank_in_country?: number | null;
+          tags?: string[];
           user_id?: string;
           created_at?: string;
           updated_at?: string;
