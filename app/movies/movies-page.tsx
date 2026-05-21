@@ -259,9 +259,9 @@ export default function MoviesPage() {
       {/* map */}
       <div className="w-full max-h-[32rem] border border-primary rounded-lg overflow-hidden">
         <ComposableMap
-          projectionConfig={{ scale: 144, center: [20, -32] }}
+          projectionConfig={{ scale: 300, center: [0, 16] }}
           className="w-full h-auto"
-          style={{ backgroundColor: "transparent" }}
+          style={{ backgroundColor: "var(--color-background)" }}
         >
           <ZoomableGroup>
             <Geographies geography={GEO_URL}>
@@ -306,15 +306,15 @@ export default function MoviesPage() {
                             ? "var(--color-primary)"
                             : hasMovies
                               ? "var(--color-primary)"
-                              : "var(--color-surface)",
-                          stroke: "var(--color-border)",
-                          strokeWidth: isSelected ? 0.4 : 0.2,
+                              : "var(--color-primary)",
+                          stroke: "var(--color-surface)",
+                          strokeWidth: isSelected ? 1.0 : 0.8,
                           cursor: "pointer",
                           opacity: isSelected
                             ? 1
                             : hasMovies
                               ? 0.4 + Math.min(count * 0.12, 0.5)
-                              : 0.15,
+                              : 0.1,
                         },
                         hover: {
                           fill: hasMovies
@@ -385,7 +385,7 @@ export default function MoviesPage() {
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
-                className={`group flex items-center gap-2.5 px-2 py-2 rounded-lg transition-colors ${
+                className={`group flex items-center gap-2.5 px-1.5 py-2 -mx-2 rounded-lg transition-colors ${
                   dragItem === index
                     ? "opacity-50 bg-surface"
                     : "hover:bg-surface"
