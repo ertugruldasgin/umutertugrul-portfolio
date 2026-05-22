@@ -21,7 +21,7 @@ export const siteMap: Record<string, SiteMapEntry> = {
   },
   "/now": { children: [] },
   "/calendar": { children: [] },
-  "/automation": { children: [], adminOnly: true },
+  "/automation": { children: [] },
   "/notes": { children: [], adminOnly: true },
   "/diagrams": { children: [], adminOnly: true },
   "/activity": { children: [] },

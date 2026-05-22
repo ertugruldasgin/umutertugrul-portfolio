@@ -279,6 +279,57 @@ export type Database = {
         };
         Relationships: [];
       };
+      automation_jobs: {
+        Row: {
+          id: string;
+          name: string;
+          type: string;
+          status: "queued" | "running" | "completed" | "failed" | "cancelled";
+          progress_current: number;
+          progress_total: number | null;
+          config: Record<string, any>;
+          logs: Record<string, any>[];
+          error: string | null;
+          user_id: string | null;
+          created_at: string;
+          started_at: string | null;
+          completed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          type: string;
+          status?: "queued" | "running" | "completed" | "failed" | "cancelled";
+          progress_current?: number;
+          progress_total?: number | null;
+          config?: Record<string, any>;
+          logs?: Record<string, any>[];
+          error?: string | null;
+          user_id?: string;
+          created_at?: string;
+          started_at?: string | null;
+          completed_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          type?: string;
+          status?: "queued" | "running" | "completed" | "failed" | "cancelled";
+          progress_current?: number;
+          progress_total?: number | null;
+          config?: Record<string, any>;
+          logs?: Record<string, any>[];
+          error?: string | null;
+          user_id?: string;
+          created_at?: string;
+          started_at?: string | null;
+          completed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
