@@ -51,8 +51,6 @@ export function JobCreateDialog({ open, onOpenChange }: JobCreateDialogProps) {
   const handleTemplateChange = (index: number) => {
     setSelectedTemplate(index);
     setConfigFields(buildDefaultFields(index));
-    // Radix UI, DropdownMenuItem'a tıklandığında menüyü otomatik kapatır.
-    // Ekstra bir state'i false yapmamıza gerek kalmadı.
   };
 
   const handleConfigChange = (key: string, value: string) => {

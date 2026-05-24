@@ -414,7 +414,7 @@ export default function NotesPage() {
                         .eq("id", activeNote.id);
                     }, 1000);
                   }}
-                  className="text-base md:text-lg bg-transparent text-foreground font-mono border-b border-transparent hover:border-border focus:border-primary outline-none transition-colors min-w-[80px]"
+                  className="text-base md:text-lg bg-transparent text-foreground font-mono border-b border-transparent hover:border-border focus:border-primary outline-none transition-colors min-w-20"
                   disabled={!isOwner}
                 />
               </div>
@@ -584,7 +584,7 @@ export default function NotesPage() {
           <button
             key={n.id}
             onClick={() => openNote(n)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface transition-colors text-left cursor-pointer group"
+            className="flex items-center gap-3 md:px-3 py-2.5 rounded-lg hover:bg-surface transition-colors text-left cursor-pointer group"
           >
             <FileTextIcon className="size-4 sm:size-5 text-subtle/60 group-hover:text-primary transition-colors shrink-0" />
             <span className="font-mono text-sm sm:text-base md:text-lg text-foreground group-hover:text-primary transition-colors truncate flex-1">

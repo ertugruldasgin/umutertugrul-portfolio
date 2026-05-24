@@ -99,11 +99,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn(
-        "h-full",
-        "bg-background",
-        "antialiased",
-        "p-2",
-        "scrollbar-hide",
+        "min-h-full bg-background antialiased p-2 scrollbar-hide",
         instrumentSerif.variable,
         jetbrainsMono.variable,
         geist.variable,
@@ -115,11 +111,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-full bg-background text-foreground flex flex-col p-2! md:p-4! md:border border-primary rounded-xl font-mono antialiased">
+      <body className="min-h-[calc(100vh-1rem)] bg-background text-foreground flex flex-col p-2! md:p-4! md:border border-primary rounded-xl font-mono antialiased">
         <TooltipProvider>
           <CursorAura />
           <PathBreadcrumb />
-          <div className="pt-10 w-full pb-8">{children}</div>
+          <div className="pt-10 w-full pb-4">{children}</div>
           <Footer
             github={github}
             huggingface={huggingface}

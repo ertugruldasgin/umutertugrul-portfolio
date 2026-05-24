@@ -71,7 +71,6 @@ function StarRating({
 
         return (
           <div key={i} className="relative size-5">
-            {/* left half hitbox */}
             {!readonly && (
               <>
                 <div
@@ -269,181 +268,187 @@ export function BookAside({
       year: "numeric",
     });
 
-  return (
-    <aside className="flex flex-col gap-4 lg:w-56 shrink-0 lg:sticky lg:top-20 lg:self-start">
-      <div className="relative group w-24 lg:w-full">
-        {book.cover_url ? (
-          <Image
-            width={224}
-            height={336}
-            src={book.cover_url}
-            alt={book.title}
-            className="w-24 lg:w-full aspect-2/3 object-cover rounded-md"
+  const coverElement = (
+    <div className="relative group w-24 lg:w-full shrink-0">
+      {book.cover_url ? (
+        <Image
+          width={224}
+          height={336}
+          src={book.cover_url}
+          alt={book.title}
+          className="w-24 lg:w-full aspect-2/3 object-cover rounded-md"
+        />
+      ) : (
+        <div className="w-24 lg:w-full aspect-2/3 bg-surface rounded-md flex items-center justify-center">
+          <span className="text-2xl text-subtle/30 font-serif">
+            {book.title[0]}
+          </span>
+        </div>
+      )}
+      {isOwner && isEditing && (
+        <>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-md cursor-pointer"
+          >
+            <CameraIcon className="size-5 text-foreground" />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleCoverUpload}
           />
-        ) : (
-          <div className="w-24 lg:w-full aspect-2/3 bg-surface rounded-md flex items-center justify-center">
-            <span className="text-2xl text-subtle/30 font-serif">
-              {book.title[0]}
-            </span>
-          </div>
-        )}
-        {isOwner && isEditing && (
-          <>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-md cursor-pointer"
-            >
-              <CameraIcon className="size-5 text-foreground" />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleCoverUpload}
+        </>
+      )}
+    </div>
+  );
+
+  const readonlyInfo = (
+    <div className="flex flex-col gap-2">
+      <h1 className="text-xl sm:text-2xl font-serif text-foreground font-medium">
+        {book.title}
+      </h1>
+      <span className="text-sm font-mono text-subtle">{book.author}</span>
+
+      {progress !== null && (
+        <div className="flex flex-col gap-1">
+          <div className="w-full h-1 bg-surface rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all"
+              style={{ width: `${progress}%` }}
             />
-          </>
+          </div>
+          <span className="text-xs font-mono text-subtle/60">
+            {book.current_page}/{book.total_pages} ({progress}%)
+          </span>
+        </div>
+      )}
+
+      <StarRating value={book.rating} readonly />
+
+      {book.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {book.tags.map((tag) => (
+            <span key={tag} className="text-xs font-mono text-subtle/60">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-col gap-0.5 mt-1">
+        {book.started_at && (
+          <span className="text-xs font-mono text-subtle/40">
+            started {formatDate(book.started_at)}
+          </span>
+        )}
+        {book.finished_at && (
+          <span className="text-xs font-mono text-subtle/40">
+            finished {formatDate(book.finished_at)}
+          </span>
         )}
       </div>
+    </div>
+  );
 
+  const editingForm = (
+    <div className="flex flex-col gap-3">
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-foreground tracking-wide">title</span>
+        <Input
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
+          className="h-8 text-sm font-mono bg-transparent"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-foreground tracking-wide">author</span>
+        <Input
+          value={editAuthor}
+          onChange={(e) => setEditAuthor(e.target.value)}
+          className="h-8 text-sm font-mono bg-transparent"
+        />
+      </label>
+
+      <div className="flex flex-col gap-1">
+        <span className="text-sm text-foreground tracking-wide">status</span>
+        <StatusCombobox value={editStatus} onChange={setEditStatus} />
+      </div>
+
+      <div className="flex gap-2">
+        <label className="flex flex-col gap-1 flex-1">
+          <span className="text-sm text-foreground tracking-wide">page</span>
+          <Input
+            type="number"
+            value={editCurrentPage}
+            onChange={(e) => setEditCurrentPage(e.target.value)}
+            className="h-8 text-sm font-mono bg-transparent"
+          />
+        </label>
+        <label className="flex flex-col gap-1 flex-1">
+          <span className="text-sm text-foreground tracking-wide">of</span>
+          <Input
+            type="number"
+            value={editTotalPages}
+            onChange={(e) => setEditTotalPages(e.target.value)}
+            placeholder="total"
+            className="h-8 text-sm font-mono bg-transparent"
+          />
+        </label>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <span className="text-sm text-foreground tracking-wide">rating</span>
+        <StarRating value={editRating} onChange={setEditRating} />
+      </div>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-foreground tracking-wide">#</span>
+        <Input
+          value={editTags}
+          onChange={(e) => setEditTags(e.target.value)}
+          placeholder="comma separated tags"
+          className="h-8 text-sm font-mono bg-transparent"
+        />
+      </label>
+
+      <div className="flex flex-col gap-1">
+        <span className="text-sm text-foreground tracking-wide">started</span>
+        <DatePicker
+          value={editStartedAt}
+          onChange={setEditStartedAt}
+          placeholder="started date"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <span className="text-sm text-foreground tracking-wide">finished</span>
+        <DatePicker
+          value={editFinishedAt}
+          onChange={setEditFinishedAt}
+          placeholder="finished date"
+        />
+      </div>
+    </div>
+  );
+
+  return (
+    <aside className="flex flex-col gap-4 lg:w-56 shrink-0 lg:sticky lg:top-20 lg:self-start">
       {isEditing ? (
-        <div className="flex flex-col gap-3">
-          <label className="flex flex-col gap-1">
-            <span className="text-sm text-foreground tracking-wide">title</span>
-            <Input
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              className="h-8 text-sm font-mono bg-transparent"
-            />
-          </label>
-
-          <label className="flex flex-col gap-1">
-            <span className="text-sm text-foreground tracking-wide">
-              author
-            </span>
-            <Input
-              value={editAuthor}
-              onChange={(e) => setEditAuthor(e.target.value)}
-              className="h-8 text-sm font-mono bg-transparent"
-            />
-          </label>
-
-          <div className="flex flex-col gap-1">
-            <span className="text-sm text-foreground tracking-wide">
-              status
-            </span>
-            <StatusCombobox value={editStatus} onChange={setEditStatus} />
-          </div>
-
-          <div className="flex gap-2">
-            <label className="flex flex-col gap-1 flex-1">
-              <span className="text-sm text-foreground tracking-wide">
-                page
-              </span>
-              <Input
-                type="number"
-                value={editCurrentPage}
-                onChange={(e) => setEditCurrentPage(e.target.value)}
-                className="h-8 text-sm font-mono bg-transparent"
-              />
-            </label>
-            <label className="flex flex-col gap-1 flex-1">
-              <span className="text-sm text-foreground tracking-wide">of</span>
-              <Input
-                type="number"
-                value={editTotalPages}
-                onChange={(e) => setEditTotalPages(e.target.value)}
-                placeholder="total"
-                className="h-8 text-sm font-mono bg-transparent"
-              />
-            </label>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <span className="text-sm text-foreground tracking-wide">
-              rating
-            </span>
-            <StarRating value={editRating} onChange={setEditRating} />
-          </div>
-
-          <label className="flex flex-col gap-1">
-            <span className="text-sm text-foreground tracking-wide">#</span>
-            <Input
-              value={editTags}
-              onChange={(e) => setEditTags(e.target.value)}
-              placeholder="comma separated tags"
-              className="h-8 text-sm font-mono bg-transparent"
-            />
-          </label>
-
-          <div className="flex flex-col gap-1">
-            <span className="text-sm text-foreground tracking-wide">
-              started
-            </span>
-            <DatePicker
-              value={editStartedAt}
-              onChange={setEditStartedAt}
-              placeholder="started date"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <span className="text-sm text-foreground tracking-wide">
-              finished
-            </span>
-            <DatePicker
-              value={editFinishedAt}
-              onChange={setEditFinishedAt}
-              placeholder="finished date"
-            />
-          </div>
-        </div>
+        <>
+          {coverElement}
+          {editingForm}
+        </>
       ) : (
-        <div className="flex flex-col gap-2">
-          <h1 className="text-xl sm:text-2xl font-serif text-foreground font-medium">
-            {book.title}
-          </h1>
-          <span className="text-sm font-mono text-subtle">{book.author}</span>
-
-          {progress !== null && (
-            <div className="flex flex-col gap-1">
-              <div className="w-full h-1 bg-surface rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-              <span className="text-xs font-mono text-subtle/60">
-                {book.current_page}/{book.total_pages} ({progress}%)
-              </span>
-            </div>
-          )}
-
-          <StarRating value={book.rating} readonly />
-
-          {book.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {book.tags.map((tag) => (
-                <span key={tag} className="text-xs font-mono text-subtle/60">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="flex flex-col gap-0.5 mt-1">
-            {book.started_at && (
-              <span className="text-xs font-mono text-subtle/40">
-                started {formatDate(book.started_at)}
-              </span>
-            )}
-            {book.finished_at && (
-              <span className="text-xs font-mono text-subtle/40">
-                finished {formatDate(book.finished_at)}
-              </span>
-            )}
+        <>
+          <div className="flex flex-row gap-4 lg:flex-col">
+            {coverElement}
+            <div className="flex-1 min-w-0">{readonlyInfo}</div>
           </div>
-        </div>
+        </>
       )}
     </aside>
   );

@@ -11,6 +11,7 @@ import { SectionDivider } from "@/components/section-divider";
 import Link from "next/link";
 import { SuggestItem } from "@/components/suggest-item";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { Input } from "@/components/ui/input";
 
 interface NowUpdate {
   id: string;
@@ -215,60 +216,58 @@ export default function NowPage() {
         )}
       </div>
 
-      <div className="flex flex-col flex-1 gap-8">
-        {isEditing ? (
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap gap-4">
-              <label className="flex flex-col gap-1">
-                <span className="text-xs text-subtle font-mono">location</span>
-                <input
-                  type="text"
-                  value={draftLocation}
-                  onChange={(e) => {
-                    setDraftLocation(e.target.value);
-                    setHasChanges(true);
-                  }}
-                  placeholder="istanbul, turkey"
-                  className="w-[212px] h-8 bg-transparent border border-border rounded-md px-2 py-1 text-sm font-mono text-primary placeholder:text-subtle/50"
-                />
-              </label>
-            </div>
-            <MinimalTiptapThree
-              key="now-editor"
-              value={draft}
-              onChange={handleDraftChange}
-              className="w-full min-h-96"
-              editorContentClassName=""
-              output="html"
-              placeholder="What are you up to?"
-              autofocus={true}
-              editable={true}
-              editorClassName=""
-            />
+      {isEditing ? (
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap gap-4">
+            <label className="flex flex-col gap-1">
+              <span className="text-xs text-subtle font-mono">location</span>
+              <Input
+                type="text"
+                value={draftLocation}
+                onChange={(e) => {
+                  setDraftLocation(e.target.value);
+                  setHasChanges(true);
+                }}
+                placeholder="istanbul, turkey"
+                className="h-8 bg-transparent border border-border rounded-md px-2 py-1 text-sm font-mono text-primary placeholder:text-subtle/50"
+              />
+            </label>
           </div>
-        ) : update ? (
-          <div>
-            <p className="font-mono text-lg text-primary font-medium lowercase">
-              last ping: {formatDate(update.created_at)}{" "}
-              {update.location && (
-                <span className="whitespace-nowrap">({update.location})</span>
-              )}
-            </p>
-            <MinimalTiptapThree
-              value={update.content}
-              className="w-full"
-              autofocus={true}
-              editable={false}
-              editorClassName=""
-              editorContentClassName=""
-            />
-          </div>
-        ) : null}
-      </div>
+          <MinimalTiptapThree
+            key="now-editor"
+            value={draft}
+            onChange={handleDraftChange}
+            className="w-full min-h-96"
+            editorContentClassName=""
+            output="html"
+            placeholder="What are you up to?"
+            autofocus={true}
+            editable={true}
+            editorClassName=""
+          />
+        </div>
+      ) : update ? (
+        <div className="flex flex-col flex-1 gap-4">
+          <p className="font-mono text-sm md:text-base text-primary font-medium lowercase">
+            last ping: {formatDate(update.created_at)}{" "}
+            {update.location && (
+              <span className="whitespace-nowrap">({update.location})</span>
+            )}
+          </p>
+          <MinimalTiptapThree
+            value={update.content}
+            className=""
+            autofocus={false}
+            editable={false}
+            editorClassName=""
+            editorContentClassName=""
+          />
+        </div>
+      ) : null}
 
       <div className="flex flex-col flex-1">
         <SectionDivider title="if you are still curious" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 py-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 pt-4 gap-4">
           <SuggestItem
             href="/blog"
             title="blog"

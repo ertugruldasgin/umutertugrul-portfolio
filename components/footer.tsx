@@ -36,7 +36,7 @@ export function Footer({ github, huggingface, discord, email }: FooterProps) {
   };
 
   return (
-    <footer className="w-full border-t pt-4 mt-auto border-primary">
+    <footer className="w-full border-t pb-6 sm:pb-0 pt-4 mt-auto border-primary">
       <div className="max-w-3xl ml-auto mr-auto flex flex-col sm:flex-row flex-1 items-center gap-4 justify-between text-xs sm:text-sm text-subtle font-mono">
         <div className="flex flex-row flex-1 gap-4">
           <p>

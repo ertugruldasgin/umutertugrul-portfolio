@@ -147,7 +147,7 @@ export default function UsesPage() {
         <TerminalCard title="color scheme" className="border-white text-white">
           <div className="flex flex-col flex-1 gap-2">
             <p>{'"arc dark"'}</p>
-            <div className="w-full md:w-128 h-12 grid grid-cols-8 grid-rows-2">
+            <div className="w-full md:w-lg h-12 grid grid-cols-8 grid-rows-2">
               <span className="w-full h-full bg-background"></span>
               <span className="w-full h-full bg-destructive"></span>
               <span className="w-full h-full bg-accent-foreground"></span>

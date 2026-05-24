@@ -459,10 +459,10 @@ export default function BlogPostPage({ slug }: { slug: string }) {
         <article className="flex-1 min-w-0">
           {!isEditing && (
             <>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-foreground font-medium mb-2">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-foreground font-medium mb-2 lg:mb-6">
                 {post.title}
               </h1>
-              <div className="flex flex-col items-baseline lg:hidden">
+              <div className="flex flex-col items-baseline lg:hidden mb-6">
                 {post.tags.length > 0 && (
                   <div className="flex flex-row gap-2">
                     {post.tags.map((tag) => (
