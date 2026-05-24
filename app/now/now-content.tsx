@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil1Icon, CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { useNowEditor, NowUpdate } from "@/hooks/use-now-editor";
+import { Input } from "@/components/ui/input";
 
 interface NowContentProps {
   initialUpdate: NowUpdate | null;
@@ -60,19 +61,20 @@ export default function NowContent({
           </div>
         )}
       </div>
-
       {editor.isEditing ? (
         <div className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1 w-fit">
-            <span className="text-xs text-subtle font-mono">location</span>
-            <input
-              type="text"
-              value={editor.draftLocation}
-              onChange={(e) => editor.handleLocationChange(e.target.value)}
-              placeholder="istanbul, turkey"
-              className="w-[212px] h-8 bg-transparent border border-border rounded-md px-2 py-1 text-sm font-mono text-primary placeholder:text-subtle/50"
-            />
-          </label>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex flex-col gap-1">
+              <span className="text-xs text-subtle font-mono">location</span>
+              <Input
+                type="text"
+                value={editor.draftLocation}
+                onChange={(e) => editor.handleLocationChange(e.target.value)}
+                placeholder="istanbul, turkey"
+                className="h-8 bg-transparent border border-border rounded-md px-2 py-1 text-sm font-mono text-primary placeholder:text-subtle/50"
+              />
+            </label>
+          </div>
           <MinimalTiptapThree
             key="now-editor"
             value={editor.draft}
@@ -85,8 +87,8 @@ export default function NowContent({
           />
         </div>
       ) : editor.update ? (
-        <div>
-          <p className="font-mono text-lg text-primary font-medium lowercase">
+        <div className="flex flex-col flex-1 gap-4">
+          <p className="font-mono text-sm md:text-base text-primary font-medium lowercase">
             last ping: {formatDate(editor.update.created_at)}{" "}
             {editor.update.location && (
               <span className="whitespace-nowrap">
@@ -96,8 +98,11 @@ export default function NowContent({
           </p>
           <MinimalTiptapThree
             value={editor.update.content}
-            className="w-full"
+            className=""
+            autofocus={false}
             editable={false}
+            editorClassName=""
+            editorContentClassName=""
           />
         </div>
       ) : null}

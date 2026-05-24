@@ -22,9 +22,9 @@ export function Suggest() {
           description="digital bookshelf"
         />
         <SuggestItem
-          href="/whoami"
-          title="whoami"
-          description="the long answer"
+          href="/movies"
+          title="movies"
+          description="cinematic atlas"
         />
       </div>
     </div>
