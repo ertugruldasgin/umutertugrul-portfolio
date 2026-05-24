@@ -1,69 +1,32 @@
 "use client";
 
-import { PageHeader } from "@/components/page-header";
-import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { SectionDivider } from "@/components/section-divider";
-import Link from "next/link";
 import { Pencil1Icon } from "@radix-ui/react-icons";
-import { useRouter } from "next/navigation";
+import { SectionDivider } from "@/components/section-divider";
 import { PromptDialog } from "@/components/prompt-dialog";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import type { BlogPost } from "./types";
+import { slugify, estimateReadingTime } from "./types";
 
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  tags: string[];
-  published: boolean;
-  user_id: string | null;
-  created_at: string;
-  updated_at: string;
+interface BlogListProps {
+  initialPosts: BlogPost[];
+  isOwner: boolean;
 }
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-function estimateReadingTime(html: string): number {
-  const text = html.replace(/<[^>]*>/g, "");
-  const words = text.split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / 200));
-}
-
-export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [isOwner, setIsOwner] = useState(false);
+export function BlogList({ initialPosts, isOwner }: BlogListProps) {
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [promptOpen, setPromptOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const init = async () => {
-      const supabase = createClient();
-
-      const { data: list } = await supabase
-        .from("blogs")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (list) setPosts(list as BlogPost[]);
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) setIsOwner(true);
-    };
-
-    init();
-  }, []);
+  const published = posts.filter((p) => p.published);
+  const drafts = posts.filter((p) => !p.published);
 
   const handleCreate = async (title: string) => {
     setPromptOpen(false);
@@ -102,30 +65,35 @@ export default function BlogPage() {
     setDeleteTarget(null);
   };
 
-  const published = posts.filter((p) => p.published);
-  const drafts = posts.filter((p) => !p.published);
-  const sectionTitle =
-    published.length == 1 ? "1 blog" : `${published.length} blogs`;
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
 
-  const draftTitle = drafts.length == 1 ? "1 draft" : `${drafts.length} drafts`;
+  const sectionTitle =
+    published.length === 1 ? "1 blog" : `${published.length} blogs`;
+  const draftTitle =
+    drafts.length === 1 ? "1 draft" : `${drafts.length} drafts`;
 
   return (
-    <div className="flex flex-col gap-12 flex-1 w-full max-w-3xl ml-auto mr-auto">
+    <>
+      {/* header row with new button */}
       <div className="flex flex-row items-start justify-between">
-        <PageHeader title="blog" description="things i think about" />
         {isOwner && (
           <Button
             size="sm"
             onClick={() => setPromptOpen(true)}
-            className="rounded-lg px-1.5 sm:px-2.5 hover:bg-primary-hover hover:cursor-pointer"
+            className="rounded-lg px-1.5 sm:px-2.5 hover:bg-primary-hover hover:cursor-pointer ml-auto"
           >
-            {" "}
             <PlusIcon className="size-4" />
             <span className="hidden sm:block ml-1">New</span>
           </Button>
         )}
       </div>
 
+      {/* drafts */}
       {isOwner && drafts.length > 0 && (
         <div className="flex flex-col gap-2">
           <SectionDivider
@@ -136,7 +104,7 @@ export default function BlogPage() {
           {drafts.map((draft) => (
             <Link
               key={draft.id}
-              href={`/blog/${[draft.slug]}`}
+              href={`/blog/${draft.slug}`}
               className="group flex flex-row items-center gap-3 px-3 py-2.5 -mx-3 rounded-lg hover:bg-surface transition-colors"
             >
               <Pencil1Icon className="size-4 hidden md:block text-subtle/40 group-hover:text-warning transition-colors shrink-0" />
@@ -145,29 +113,24 @@ export default function BlogPage() {
                   {draft.title}
                 </span>
                 <span className="text-xs text-subtle/40 font-mono">
-                  {new Date(draft.updated_at).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                  {formatDate(draft.updated_at)}
                 </span>
               </div>
-              {isOwner && (
-                <Trash2
-                  className="size-4 text-subtle/40 hover:text-danger transition-colors shrink-0"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setDeleteTarget(draft.id);
-                    setConfirmOpen(true);
-                  }}
-                />
-              )}
+              <Trash2
+                className="size-4 text-subtle/40 hover:text-danger transition-colors shrink-0"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDeleteTarget(draft.id);
+                  setConfirmOpen(true);
+                }}
+              />
             </Link>
           ))}
         </div>
       )}
 
+      {/* published */}
       <div className="flex flex-col gap-1">
         <SectionDivider
           title={sectionTitle}
@@ -185,11 +148,7 @@ export default function BlogPage() {
                 {post.title}
               </span>
               <span className="text-xs text-subtle/40 font-mono shrink-0">
-                {new Date(post.created_at).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDate(post.created_at)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -233,6 +192,6 @@ export default function BlogPage() {
           setDeleteTarget(null);
         }}
       />
-    </div>
+    </>
   );
 }
