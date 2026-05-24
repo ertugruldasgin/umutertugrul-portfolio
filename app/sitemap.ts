@@ -48,11 +48,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.5,
     },
-    {
-      url: `${baseUrl}/calendar`,
-      changeFrequency: "weekly" as const,
-      priority: 0.4,
-    },
   ].map((p) => ({ ...p, lastModified: new Date() }));
 
   const { data: posts } = await supabase

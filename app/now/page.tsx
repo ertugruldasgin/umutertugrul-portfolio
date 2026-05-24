@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import NowContent from "./now-content";
+import NowContent from "../../components/now/now-content";
 import { NowHeader } from "@/components/now/now-header";
 import { Suggest } from "@/components/now/suggest";
 
