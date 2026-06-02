@@ -99,7 +99,7 @@ function ActiveSegment({ label, currentPath, isAdmin }: ActiveSegmentProps) {
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-48 p-0 border-border rounded-xl bg-surface"
+        className="w-48 ml-3 p-0 border-border rounded-xl bg-surface"
       >
         <div className="px-3 py-2 text-xs text-subtle border-b border-border">
           {parentDisplay(currentPath, type)}
